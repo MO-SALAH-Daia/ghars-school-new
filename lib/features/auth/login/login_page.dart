@@ -118,61 +118,61 @@ class _LoginPageState extends State<LoginPage> {
     final prefs = context.use<PrefsService>();
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarIconBrightness: Brightness.dark,
-          statusBarBrightness: Brightness.light,
-        ),
-      ),
+      backgroundColor: const Color(0xfff8faf6), // Soft organic background
       body: GestureDetector(
         onTap: () => removeFocus(context),
         child: Stack(
           children: [
-            // Curated gradient background
+            // Background organic gradient with soft glows
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppStyle.appColor.withValues(alpha: 0.05),
-                    AppStyle.appColor.withValues(alpha: 0.15),
-                    AppStyle.appColor.withValues(alpha: 0.3),
+                    Color(0xffedf4e8), // Soft brand green tint
+                    Color(0xfff5f8f3), // Very light organic tint
+                    Colors.white,
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
               ),
             ),
-            // Background blur overlay card
+            // Floating ambient glows
             Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: ClipRRect(
+              top: -100.h,
+              right: -100.w,
+              child: Container(
+                width: 300.w,
+                height: 300.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppStyle.blueCyan.withOpacity(0.08),
+                ),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                  child: Container(
-                    width: double.infinity,
-                    height: 250.h,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.3),
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage(AppAssets.authAppbarBackground),
-                      ),
-                    ),
-                  ),
+                  filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                  child: Container(color: Colors.transparent),
                 ),
               ),
             ),
             Positioned(
-              top: 100.h,
-              left: 0,
-              right: 0,
-              bottom: 0,
+              top: 150.h,
+              left: -150.w,
+              child: Container(
+                width: 350.w,
+                height: 350.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppStyle.appColor.withOpacity(0.06),
+                ),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 60, sigmaY: 60),
+                  child: Container(color: Colors.transparent),
+                ),
+              ),
+            ),
+            
+            // Main content
+            SafeArea(
               child: StreamBuilder<ManagerState>(
                 initialData: ManagerState.idle,
                 stream: loginManager.state$,
@@ -186,194 +186,206 @@ class _LoginPageState extends State<LoginPage> {
                     child: Form(
                       key: _formKey,
                       autovalidateMode: _autoValidateMode,
-                      child: ListView(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          // Brand Logo
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 800),
-                            child: Hero(
-                              tag: 'logo',
-                              child: Container(
-                                height: 120.h,
-                                padding: EdgeInsets.all(10.r),
-                                child: SvgPicture.asset(
-                                  AppAssets.logoSvg,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-                          // Title Header
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 900),
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                context.translate(AppStrings.login) ?? '',
-                                style: TextStyle(
-                                  fontSize: 24.sp,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 30.h),
-                          // Username Input
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 1000),
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  context.translate(AppStrings.userName) ?? '',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
+                                SizedBox(height: 30.h),
+                                // Brand Logo (Full SVG with typography)
+                                FadeInDown(
+                                  duration: const Duration(milliseconds: 700),
+                                  child: Hero(
+                                    tag: 'logo',
+                                    child: Container(
+                                      height: 140.h,
+                                      padding: EdgeInsets.all(10.r),
+                                      child: SvgPicture.asset(
+                                        AppAssets.logoSvg,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                                InputText(
-                                  autofillHints: const [AutofillHints.username],
-                                  textInputType: TextInputType.text,
-                                  controller: _usernameController,
-                                  fillColor: Colors.white60,
-                                  topMargin: 10.h,
-                                  borderColor: AppStyle.appColor.withValues(alpha: 0.2),
-                                  prefixIconWidget: const Icon(
-                                    Icons.person_pin_rounded,
-                                    color: Colors.black54,
+                                SizedBox(height: 10.h),
+                                FadeInDown(
+                                  duration: const Duration(milliseconds: 800),
+                                  child: Text(
+                                    context.translate(AppStrings.login) ?? 'Login',
+                                    style: TextStyle(
+                                      fontSize: 16.sp,
+                                      color: AppStyle.twilight,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                  hint: context.translate(AppStrings.userName) ?? '',
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                    vertical: 14.h,
+                                ),
+                                SizedBox(height: 40.h),
+                                // Login Card Container
+                                Expanded(
+                                  child: FadeInUp(
+                                    duration: const Duration(milliseconds: 800),
+                                    child: Container(
+                                      width: double.infinity,
+                                      padding: EdgeInsets.all(24.w),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(30.r),
+                                          topRight: Radius.circular(30.r),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.04),
+                                            blurRadius: 20,
+                                            offset: const Offset(0, -6),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10.h),
+                                          // Username Label
+                                          Text(
+                                            context.translate(AppStrings.userName) ?? '',
+                                            style: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: AppStyle.twilight,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          InputText(
+                                            autofillHints: const [AutofillHints.username],
+                                            textInputType: TextInputType.text,
+                                            controller: _usernameController,
+                                            fillColor: const Color(0xfffcfdfe),
+                                            topMargin: 8.h,
+                                            borderRadius: 12.r,
+                                            borderColor: AppStyle.appColor.withOpacity(0.15),
+                                            prefixIconWidget: Icon(
+                                              Icons.person_outline_rounded,
+                                              color: AppStyle.appColor,
+                                            ),
+                                            hint: context.translate(AppStrings.userName) ?? '',
+                                            contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 16.w,
+                                              vertical: 14.h,
+                                            ),
+                                            currentFocusNode: _usernameFocus,
+                                            nextFocusNode: _passwordFocus,
+                                            validator: (value) {
+                                              if (value == null || value.trim().isEmpty) {
+                                                return context.translate(AppStrings.required) ?? '';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          SizedBox(height: 20.h),
+                                          // Password Label
+                                          Text(
+                                            context.translate(AppStrings.password) ?? '',
+                                            style: TextStyle(
+                                              fontSize: 14.sp,
+                                              color: AppStyle.twilight,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          InputPassword(
+                                            autofillHints: const [AutofillHints.password],
+                                            prefixIconWidget: Icon(
+                                              Icons.lock_outline_rounded,
+                                              color: AppStyle.appColor,
+                                            ),
+                                            fillColor: const Color(0xfffcfdfe),
+                                            topMargin: 8.h,
+                                            borderRadius: 12.r,
+                                            borderColor: AppStyle.appColor.withOpacity(0.15),
+                                            hint: context.translate(AppStrings.password) ?? '',
+                                            controller: _passwordController,
+                                            currentFocusNode: _passwordFocus,
+                                            validator: (value) {
+                                              if (value == null || value.trim().isEmpty) {
+                                                return context.translate(AppStrings.required) ?? '';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          SizedBox(height: 10.h),
+                                          // Forgot Password Link
+                                          Align(
+                                            alignment: prefs.appLanguage == 'en'
+                                                ? Alignment.centerRight
+                                                : Alignment.centerLeft,
+                                            child: TextButton(
+                                              child: Text(
+                                                context.translate(AppStrings.forgotYourPassword) ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  color: AppStyle.appColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pushNamed(
+                                                  AppRoutesNames.forgotPasswordPage,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(height: 25.h),
+                                          // Submit Button
+                                          MainButtonWidget(
+                                            title: context.translate(AppStrings.login) ?? '',
+                                            buttonHeight: 48.h,
+                                            color: AppStyle.appColor,
+                                            borderColor: AppStyle.appColor,
+                                            onClick: () async {
+                                              removeFocus(context);
+                                              if (_formKey.currentState!.validate()) {
+                                                _formKey.currentState!.save();
+                                              } else {
+                                                setState(() {
+                                                  _autoValidateMode = AutovalidateMode.always;
+                                                });
+                                                return;
+                                              }
+
+                                              final username = _usernameController.text;
+                                              final password = _passwordController.text;
+
+                                              final result = await loginManager.login(
+                                                request: LoginRequest(
+                                                  username: username,
+                                                  password: password,
+                                                  loginAsEmp: false,
+                                                ),
+                                              );
+
+                                              if (result.state == ManagerState.success) {
+                                                if (result.isEmployeeSelectionRequired) {
+                                                  _showRoleSelectionDialog(
+                                                    context,
+                                                    loginManager,
+                                                    result,
+                                                    username,
+                                                    password,
+                                                  );
+                                                } else {
+                                                  locator<NavigationService>().pushNamedAndRemoveUntil(
+                                                    AppRoutesNames.mainTabsWidget,
+                                                  );
+                                                }
+                                              }
+                                            },
+                                          ),
+                                          SizedBox(height: 20.h),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  currentFocusNode: _usernameFocus,
-                                  nextFocusNode: _passwordFocus,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return context.translate(AppStrings.required) ?? '';
-                                    }
-                                    return null;
-                                  },
                                 ),
                               ],
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                          // Password Input
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 1100),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  context.translate(AppStrings.password) ?? '',
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: Colors.black87,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                InputPassword(
-                                  autofillHints: const [AutofillHints.password],
-                                  prefixIconWidget: const Icon(
-                                    Icons.lock_outline_rounded,
-                                    color: Colors.black54,
-                                  ),
-                                  fillColor: Colors.white60,
-                                  topMargin: 10.h,
-                                  borderColor: AppStyle.appColor.withValues(alpha: 0.2),
-                                  hint: context.translate(AppStrings.password) ?? '',
-                                  controller: _passwordController,
-                                  currentFocusNode: _passwordFocus,
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return context.translate(AppStrings.required) ?? '';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 10.h),
-                          // Forgot Password link
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 1200),
-                            child: Align(
-                              alignment: prefs.appLanguage == 'en'
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: TextButton(
-                                child: Text(
-                                  context.translate(AppStrings.forgotYourPassword) ?? '',
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    color: AppStyle.appColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  // Navigating to forgot password page
-                                  Navigator.of(context).pushNamed(
-                                    AppRoutesNames.forgotPasswordPage,
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                          // Submit Button
-                          FadeInDown(
-                            duration: const Duration(milliseconds: 1300),
-                            child: MainButtonWidget(
-                              title: context.translate(AppStrings.login) ?? '',
-                              buttonHeight: 48.h,
-                              color: AppStyle.appColor,
-                              borderColor: AppStyle.appColor,
-                              onClick: () async {
-                                removeFocus(context);
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-                                } else {
-                                  setState(() {
-                                    _autoValidateMode = AutovalidateMode.always;
-                                  });
-                                  return;
-                                }
-
-                                final username = _usernameController.text;
-                                final password = _passwordController.text;
-
-                                final result = await loginManager.login(
-                                  request: LoginRequest(
-                                    username: username,
-                                    password: password,
-                                    loginAsEmp: false,
-                                  ),
-                                );
-
-                                if (result.state == ManagerState.success) {
-                                  if (result.isEmployeeSelectionRequired) {
-                                    _showRoleSelectionDialog(
-                                      context,
-                                      loginManager,
-                                      result,
-                                      username,
-                                      password,
-                                    );
-                                  } else {
-                                    locator<NavigationService>().pushNamedAndRemoveUntil(
-                                      AppRoutesNames.mainTabsWidget,
-                                    );
-                                  }
-                                }
-                              },
                             ),
                           ),
                         ],

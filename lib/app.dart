@@ -172,7 +172,7 @@ class _GharsSchoolState extends State<GharsSchool> {
                   }
                 },
 
-            home: locator<PrefsService>().userObj == null
+            home: locator<PrefsService>().userObj != null
                 ? const ContainerPageWithDrawer(
                     mainScreen: LandingTabsWidget(),
                     menuScreen: DrawerWidget(),

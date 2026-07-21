@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_item.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app_core/app_core.dart';
 
@@ -80,28 +81,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(
-                        top: 30,
-                        bottom: 10,
-                        left: 30,
-                        right: 30,
+                        top: 35,
+                        bottom: 15,
+                        left: 35,
+                        right: 35,
                       ),
-                      height: 80.w,
-                      width: 80.w,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(100),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.06),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
+                      height: 90.w,
+                      width: 90.w,
                       child: Image.asset(
                         AppAssets.logoPng,
                         fit: BoxFit.contain,
