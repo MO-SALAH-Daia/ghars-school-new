@@ -116,4 +116,7 @@ abstract class AppStrings {
       'areYouWantContinueAsParentOrEmployee';
   static const String gharsSchool = 'gharsSchool';
   static const String back = 'back';
+  static const String services = 'services';
+  static const String calendar = 'calendar';
+  static const String studentProfile = 'studentProfile';
 }

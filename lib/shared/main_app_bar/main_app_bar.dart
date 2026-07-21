@@ -79,7 +79,7 @@ class MainAppBar extends StatelessWidget {
                   },
             )
           : IconButton(
-              icon: const Icon(Icons.arrow_back_rounded),
+              icon: const Icon(Icons.arrow_back_ios),
               onPressed:
                   onBackBtnClicked ??
                   () {

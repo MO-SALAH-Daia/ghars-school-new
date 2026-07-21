@@ -47,6 +47,7 @@ dependencies:
   cached_network_image: ^3.4.1
   shimmer: ^3.0.0
   font_awesome_flutter: ^11.0.0
+  iconly: ^1.0.1
   email_validator: ^3.0.0
   flutter_carousel_slider_plus: ^0.0.1
   flutter_html: ^3.0.0

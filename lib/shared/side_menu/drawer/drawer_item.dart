@@ -20,11 +20,11 @@ class DrawerItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      minLeadingWidth: 20,
+      minLeadingWidth: 20.sp,
       title: Text(
         title,
         style: TextStyle(
-          fontSize: 14.sp,
+          fontSize: 12.sp,
           fontWeight: FontWeight.bold,
           color: AppStyle.twilight,
         ),

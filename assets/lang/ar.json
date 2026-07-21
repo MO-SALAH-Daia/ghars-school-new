@@ -114,5 +114,8 @@
   "continueAsEmployee": "الدخول كموظف",
   "areYouWantContinueAsParentOrEmployee": "هل تريد المتابعة كولي أمر أم موظف؟",
   "gharsSchool": "مدرسة غرس",
-  "back": "رجوع"
+  "back": "رجوع",
+  "services": "الخدمات",
+  "calendar": "التقويم",
+  "studentProfile": "ملف الطالب"
 }

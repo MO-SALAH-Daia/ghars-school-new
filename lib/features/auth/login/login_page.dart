@@ -1,8 +1,9 @@
 import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/auth/login/login_manager.dart';
 import 'package:ghars_school/features/auth/login/login_request.dart';
@@ -10,8 +11,6 @@ import 'package:ghars_school/shared/input_form_field/input_password.dart';
 import 'package:ghars_school/shared/input_form_field/input_text.dart';
 import 'package:ghars_school/shared/main_button/main_button_widget.dart';
 import 'package:ghars_school/shared/remove_focus/remove_focus.dart';
-import 'package:animate_do/animate_do.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -63,7 +62,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
           content: Text(
-            context.translate(AppStrings.areYouWantContinueAsParentOrEmployee) ?? '',
+            context.translate(
+                  AppStrings.areYouWantContinueAsParentOrEmployee,
+                ) ??
+                '',
             style: TextStyle(fontSize: 14.sp),
           ),
           actions: [
@@ -80,13 +82,16 @@ class _LoginPageState extends State<LoginPage> {
                 );
                 if (state.state == ManagerState.success) {
                   locator<NavigationService>().pushNamedAndRemoveUntil(
-                    AppRoutesNames.mainTabsWidget,
+                    AppRoutesNames.containerPageWithDrawer,
                   );
                 }
               },
               child: Text(
                 context.translate(AppStrings.continueAsEmployee) ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppStyle.appColor,
+                ),
               ),
             ),
             TextButton(
@@ -97,13 +102,16 @@ class _LoginPageState extends State<LoginPage> {
                 if (user != null) {
                   loginManager.saveUserSession(user, username, password);
                   locator<NavigationService>().pushNamedAndRemoveUntil(
-                    AppRoutesNames.mainTabsWidget,
+                    AppRoutesNames.containerPageWithDrawer,
                   );
                 }
               },
               child: Text(
                 context.translate(AppStrings.continueAsParent) ?? '',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppStyle.appColor,
+                ),
               ),
             ),
           ],
@@ -170,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            
+
             // Main content
             SafeArea(
               child: StreamBuilder<ManagerState>(
@@ -212,7 +220,8 @@ class _LoginPageState extends State<LoginPage> {
                                 FadeInDown(
                                   duration: const Duration(milliseconds: 800),
                                   child: Text(
-                                    context.translate(AppStrings.login) ?? 'Login',
+                                    context.translate(AppStrings.login) ??
+                                        'Login',
                                     style: TextStyle(
                                       fontSize: 16.sp,
                                       color: AppStyle.twilight,
@@ -236,19 +245,25 @@ class _LoginPageState extends State<LoginPage> {
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.04),
+                                            color: Colors.black.withOpacity(
+                                              0.04,
+                                            ),
                                             blurRadius: 20,
                                             offset: const Offset(0, -6),
                                           ),
                                         ],
                                       ),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           SizedBox(height: 10.h),
                                           // Username Label
                                           Text(
-                                            context.translate(AppStrings.userName) ?? '',
+                                            context.translate(
+                                                  AppStrings.userName,
+                                                ) ??
+                                                '',
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               color: AppStyle.twilight,
@@ -256,27 +271,39 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                           ),
                                           InputText(
-                                            autofillHints: const [AutofillHints.username],
+                                            autofillHints: const [
+                                              AutofillHints.username,
+                                            ],
                                             textInputType: TextInputType.text,
                                             controller: _usernameController,
                                             fillColor: const Color(0xfffcfdfe),
                                             topMargin: 8.h,
                                             borderRadius: 12.r,
-                                            borderColor: AppStyle.appColor.withOpacity(0.15),
+                                            borderColor: AppStyle.appColor
+                                                .withOpacity(0.15),
                                             prefixIconWidget: Icon(
                                               Icons.person_outline_rounded,
                                               color: AppStyle.appColor,
                                             ),
-                                            hint: context.translate(AppStrings.userName) ?? '',
-                                            contentPadding: EdgeInsets.symmetric(
-                                              horizontal: 16.w,
-                                              vertical: 14.h,
-                                            ),
+                                            hint:
+                                                context.translate(
+                                                  AppStrings.userName,
+                                                ) ??
+                                                '',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                  horizontal: 16.w,
+                                                  vertical: 14.h,
+                                                ),
                                             currentFocusNode: _usernameFocus,
                                             nextFocusNode: _passwordFocus,
                                             validator: (value) {
-                                              if (value == null || value.trim().isEmpty) {
-                                                return context.translate(AppStrings.required) ?? '';
+                                              if (value == null ||
+                                                  value.trim().isEmpty) {
+                                                return context.translate(
+                                                      AppStrings.required,
+                                                    ) ??
+                                                    '';
                                               }
                                               return null;
                                             },
@@ -284,7 +311,10 @@ class _LoginPageState extends State<LoginPage> {
                                           SizedBox(height: 20.h),
                                           // Password Label
                                           Text(
-                                            context.translate(AppStrings.password) ?? '',
+                                            context.translate(
+                                                  AppStrings.password,
+                                                ) ??
+                                                '',
                                             style: TextStyle(
                                               fontSize: 14.sp,
                                               color: AppStyle.twilight,
@@ -292,7 +322,9 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                           ),
                                           InputPassword(
-                                            autofillHints: const [AutofillHints.password],
+                                            autofillHints: const [
+                                              AutofillHints.password,
+                                            ],
                                             prefixIconWidget: Icon(
                                               Icons.lock_outline_rounded,
                                               color: AppStyle.appColor,
@@ -300,13 +332,22 @@ class _LoginPageState extends State<LoginPage> {
                                             fillColor: const Color(0xfffcfdfe),
                                             topMargin: 8.h,
                                             borderRadius: 12.r,
-                                            borderColor: AppStyle.appColor.withOpacity(0.15),
-                                            hint: context.translate(AppStrings.password) ?? '',
+                                            borderColor: AppStyle.appColor
+                                                .withOpacity(0.15),
+                                            hint:
+                                                context.translate(
+                                                  AppStrings.password,
+                                                ) ??
+                                                '',
                                             controller: _passwordController,
                                             currentFocusNode: _passwordFocus,
                                             validator: (value) {
-                                              if (value == null || value.trim().isEmpty) {
-                                                return context.translate(AppStrings.required) ?? '';
+                                              if (value == null ||
+                                                  value.trim().isEmpty) {
+                                                return context.translate(
+                                                      AppStrings.required,
+                                                    ) ??
+                                                    '';
                                               }
                                               return null;
                                             },
@@ -319,7 +360,11 @@ class _LoginPageState extends State<LoginPage> {
                                                 : Alignment.centerLeft,
                                             child: TextButton(
                                               child: Text(
-                                                context.translate(AppStrings.forgotYourPassword) ?? '',
+                                                context.translate(
+                                                      AppStrings
+                                                          .forgotYourPassword,
+                                                    ) ??
+                                                    '',
                                                 style: TextStyle(
                                                   fontSize: 13,
                                                   color: AppStyle.appColor,
@@ -328,7 +373,8 @@ class _LoginPageState extends State<LoginPage> {
                                               ),
                                               onPressed: () {
                                                 Navigator.of(context).pushNamed(
-                                                  AppRoutesNames.forgotPasswordPage,
+                                                  AppRoutesNames
+                                                      .forgotPasswordPage,
                                                 );
                                               },
                                             ),
@@ -336,34 +382,45 @@ class _LoginPageState extends State<LoginPage> {
                                           SizedBox(height: 25.h),
                                           // Submit Button
                                           MainButtonWidget(
-                                            title: context.translate(AppStrings.login) ?? '',
+                                            title:
+                                                context.translate(
+                                                  AppStrings.login,
+                                                ) ??
+                                                '',
                                             buttonHeight: 48.h,
                                             color: AppStyle.appColor,
                                             borderColor: AppStyle.appColor,
                                             onClick: () async {
                                               removeFocus(context);
-                                              if (_formKey.currentState!.validate()) {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
                                                 _formKey.currentState!.save();
                                               } else {
                                                 setState(() {
-                                                  _autoValidateMode = AutovalidateMode.always;
+                                                  _autoValidateMode =
+                                                      AutovalidateMode.always;
                                                 });
                                                 return;
                                               }
 
-                                              final username = _usernameController.text;
-                                              final password = _passwordController.text;
+                                              final username =
+                                                  _usernameController.text;
+                                              final password =
+                                                  _passwordController.text;
 
-                                              final result = await loginManager.login(
-                                                request: LoginRequest(
-                                                  username: username,
-                                                  password: password,
-                                                  loginAsEmp: false,
-                                                ),
-                                              );
+                                              final result = await loginManager
+                                                  .login(
+                                                    request: LoginRequest(
+                                                      username: username,
+                                                      password: password,
+                                                      loginAsEmp: false,
+                                                    ),
+                                                  );
 
-                                              if (result.state == ManagerState.success) {
-                                                if (result.isEmployeeSelectionRequired) {
+                                              if (result.state ==
+                                                  ManagerState.success) {
+                                                if (result
+                                                    .isEmployeeSelectionRequired) {
                                                   _showRoleSelectionDialog(
                                                     context,
                                                     loginManager,
@@ -372,9 +429,11 @@ class _LoginPageState extends State<LoginPage> {
                                                     password,
                                                   );
                                                 } else {
-                                                  locator<NavigationService>().pushNamedAndRemoveUntil(
-                                                    AppRoutesNames.mainTabsWidget,
-                                                  );
+                                                  locator<NavigationService>()
+                                                      .pushNamedAndRemoveUntil(
+                                                        AppRoutesNames
+                                                            .containerPageWithDrawer,
+                                                      );
                                                 }
                                               }
                                             },

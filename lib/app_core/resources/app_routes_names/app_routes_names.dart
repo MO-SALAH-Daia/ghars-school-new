@@ -1,10 +1,10 @@
 abstract class AppRoutesNames {
-  static const String mainTabsWidget = '/mainTabsWidget';
   static const String forgotPasswordPage = '/forgotPasswordPage';
   static const String loginPage = '/loginPage';
   static const String verificationPage = '/verificationPage';
   static const String registerPage = '/registerPage';
   static const String notificationsPage = '/notificationsPage';
+  static const String containerPageWithDrawer = '/containerPageWithDrawer';
   static const String cartPage = '/cartPage';
   static const String favoritesPage = '/favoritesPage';
   static const String packageDetailsPage = '/packageDetailsPage';

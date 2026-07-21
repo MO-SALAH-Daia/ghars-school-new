@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
-import 'package:ghars_school/shared/side_menu/main_page_with_drawer.dart';
+import 'package:ghars_school/shared/side_menu/container_page_with_drawer.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_core/app_core.dart';

@@ -6,6 +6,7 @@ import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_page.dart';
 import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
+import 'package:ghars_school/shared/floating_bottom_nav_bar/floating_bottom_nav_bar.dart';
 
 import 'landing_tabs_manager.dart';
 
@@ -43,7 +44,7 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
       case 1:
         currentAppBarWidget = MainAppBar(
           hasCartBtn: true,
-          title: '${context.translate(AppStrings.discount)}',
+          title: '${context.translate(AppStrings.services)}',
           onBackBtnClicked: () {
             selectTap(0);
           },
@@ -52,7 +53,7 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
         break;
       case 2:
         currentAppBarWidget = MainAppBar(
-          title: '${context.translate(AppStrings.settings)}',
+          title: '${context.translate(AppStrings.calendar)}',
           onBackBtnClicked: () {
             selectTap(0);
           },
@@ -62,7 +63,7 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
       case 3:
         currentAppBarWidget = MainAppBar(
           hasCartBtn: true,
-          title: '${context.translate(AppStrings.contactUs)}',
+          title: '${context.translate(AppStrings.studentProfile)}',
           onBackBtnClicked: () {
             selectTap(0);
           },
@@ -119,94 +120,36 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
                 // ),
               ),
               body: Container(color: Colors.white, child: currentWidget),
-              bottomNavigationBar: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                  child: Theme(
-                    data: Theme.of(context).copyWith(
-                      canvasColor: Colors.transparent,
-                    ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.85),
-                        border: Border(
-                          top: BorderSide(
-                            color: Colors.grey.withOpacity(0.1),
-                            width: 1,
-                          ),
-                        ),
-                      ),
-                      child: BottomNavigationBar(
-                        onTap: (index) {
-                          selectTap(index);
-                        },
-                        currentIndex: currentIndex,
-                        selectedItemColor: AppStyle.appColor,
-                        unselectedItemColor: Colors.grey[400],
-                        showSelectedLabels: true,
-                        showUnselectedLabels: true,
-                        backgroundColor: Colors.transparent,
-                        elevation: 0,
-                        selectedLabelStyle: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.bold,
-                          color: AppStyle.appColor,
-                        ),
-                        unselectedLabelStyle: TextStyle(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey[400],
-                        ),
-                        items: List.generate(4, (index) {
-                          final isSelected = currentIndex == index;
-                          String tooltip = '';
-                          String icon = '';
-                          switch (index) {
-                            case 0:
-                              icon = AppAssets.home;
-                              tooltip = '${context.translate(AppStrings.home)}';
-                              break;
-
-                            case 2:
-                              icon = AppAssets.settings;
-                              tooltip =
-                                  '${context.translate(AppStrings.settings)}';
-                              break;
-                            case 1:
-                              icon = AppAssets.packages;
-                              tooltip =
-                                  '${context.translate(AppStrings.packages)}';
-                              break;
-                            case 3:
-                              icon = AppAssets.restaurants;
-                              tooltip =
-                                  '${context.translate(AppStrings.restaurants)}';
-                              break;
-
-                            default:
-                          }
-
-                          return BottomNavigationBarItem(
-                            icon: SvgPicture.asset(
-                              icon,
-                              height: isSelected ? 18.sp : 14.sp,
-                              colorFilter: ColorFilter.mode(
-                                isSelected ? AppStyle.appColor : Colors.grey[400]!,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                            label: tooltip,
-                            tooltip: tooltip,
-                          );
-                        }),
-                      ),
-                    ),
+              bottomNavigationBar: FloatingBottomNavBar(
+                currentIndex: currentIndex,
+                backgroundColor: Colors.white,
+                activeColor: AppStyle.appColor,
+                inactiveColor: const Color(0xff8c9682),
+                onTap: (index) {
+                  selectTap(index);
+                },
+                items: [
+                  FloatingNavItem(
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home,
+                    label: '${context.translate(AppStrings.home)}',
                   ),
-                ),
+                  FloatingNavItem(
+                    icon: Icons.widgets_outlined,
+                    activeIcon: Icons.widgets,
+                    label: '${context.translate(AppStrings.services)}',
+                  ),
+                  FloatingNavItem(
+                    icon: Icons.calendar_month_outlined,
+                    activeIcon: Icons.calendar_month,
+                    label: '${context.translate(AppStrings.calendar)}',
+                  ),
+                  FloatingNavItem(
+                    icon: Icons.person_outline,
+                    activeIcon: Icons.person,
+                    label: '${context.translate(AppStrings.studentProfile)}',
+                  ),
+                ],
               ),
             );
           },

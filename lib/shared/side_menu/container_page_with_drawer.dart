@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../app_core/app_core.dart';
 import 'custom_zoom/custom_zoom.dart';
-// import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 /*
 Created by: Mohammad Salah
@@ -39,8 +38,6 @@ class ContainerPageWithDrawer extends StatelessWidget {
       shadowLayer1Color: AppStyle.appColor.shade200,
       mainScreen: mainScreen,
       menuScreen: menuScreen,
-      // mainScreen: const TabsWidget(key: Key('x')),
-      // menuScreen: const DrawerWidget(key: Key('xx')),
     );
   }
 }

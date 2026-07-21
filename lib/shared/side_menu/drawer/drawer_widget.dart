@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_item.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../app_core/app_core.dart';
 
@@ -94,35 +93,25 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         fit: BoxFit.contain,
                       ),
                     ),
-                    const SizedBox(height: 5),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text(
-                        prefs.userObj != null
-                            ? '${prefs.userObj?.name} \n${prefs.userObj?.email}'
-                            : '${context.translate(AppStrings.registerThrough)}',
-                        style: TextStyle(
-                          color: AppStyle.twilight,
-                          fontSize: 14.sp,
-                          height: 1.3,
-                          fontWeight: FontWeight.bold,
+                    if (prefs.userObj != null)
+                      Container(
+                        width: 200.sp,
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Text(
+                          '${prefs.userObj?.name}',
+                          style: TextStyle(
+                            color: AppStyle.appColor,
+                            fontSize: 13.sp,
+                            height: 1.3,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    // if (prefs.userObj != null)
-                    //   Padding(
-                    //     padding: const EdgeInsets.symmetric(horizontal: 35.0),
-                    //     child: Text(
-                    //       '${prefs.userObj?.email}',
-                    //       style: TextStyle(
-                    //         color: Colors.white,
-                    //         fontSize: 13.sp,
-                    //       ),
-                    //     ),
-                    //   ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     DrawerItemWidget(
                       title: '${context.translate(AppStrings.home)}',
                       // icon: SvgPicture.asset(

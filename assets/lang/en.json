@@ -114,5 +114,8 @@
   "continueAsEmployee": "Continue as Employee",
   "areYouWantContinueAsParentOrEmployee": "Do you want to continue as Parent or Employee?",
   "gharsSchool": "Ghars School",
-  "back": "Back"
+  "back": "Back",
+  "services": "Services",
+  "calendar": "Calendar",
+  "studentProfile": "Student Profile"
 }

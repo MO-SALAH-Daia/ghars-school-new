@@ -137,10 +137,10 @@ class _FormsStateHandlingState extends State<FormsStateHandling> {
   Widget _errorWidget(BuildContext context, DialogRequest request, [error]) {
     return FadeInUp(
       child: CustomDialog(
-        titleColor: const Color(0xff042464),
+        titleColor: AppStyle.twilight,
         title: request.title,
         description: request.description,
-        descriptionColor: const Color(0xff042464),
+        descriptionColor: AppStyle.twilight,
         imageUrl: AppAssets.logoPng,
         logoColor: AppStyle.appColor,
         // imageInBodyUrl: AppAssets.appbarLogo,
@@ -161,7 +161,7 @@ class _FormsStateHandlingState extends State<FormsStateHandling> {
                 );
               }
             : widget.onClickCloseErrorBtn,
-        confirmBtnColor: const Color(0xff0081FD),
+        confirmBtnColor: AppStyle.appColor,
       ),
     );
   }
