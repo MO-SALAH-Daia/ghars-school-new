@@ -374,7 +374,7 @@ class _LoginPageState extends State<LoginPage> {
                                             },
                                           ),
                                           SizedBox(height: 10.h),
-                                          // Forgot Password Link
+                                          // // Forgot Password Link
                                           Align(
                                             alignment: prefs.appLanguage == 'en'
                                                 ? Alignment.centerRight
@@ -382,7 +382,8 @@ class _LoginPageState extends State<LoginPage> {
                                             child: TextButton(
                                               child: Text(
                                                 context.translate(
-                                                      AppStrings.changePassword,
+                                                      AppStrings
+                                                          .forgotYourPassword,
                                                     ) ??
                                                     '',
                                                 style: TextStyle(
@@ -394,7 +395,7 @@ class _LoginPageState extends State<LoginPage> {
                                               onPressed: () {
                                                 Navigator.of(context).pushNamed(
                                                   AppRoutesNames
-                                                      .changePasswordPage,
+                                                      .forgotPasswordPage,
                                                 );
                                               },
                                             ),
