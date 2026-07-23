@@ -4,6 +4,7 @@ import 'package:ghars_school/app_core/services/media_service/media_Service.dart'
 import 'package:ghars_school/features/landing_tabs/landing_tabs_manager.dart';
 import 'package:ghars_school/features/auth/login/login_manager.dart';
 import 'package:ghars_school/features/auth/forgot_password/forgot_password_manager.dart';
+import 'package:ghars_school/features/landing_tabs/pages/home/home_manager.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 
 import 'app_core.dart';
@@ -54,6 +55,9 @@ Future<void> setupLocator() async {
   locator.registerLazySingleton<ForgotPasswordManager>(
     () => ForgotPasswordManager(),
   );
+
+  /// HomeManager
+  locator.registerLazySingleton<HomeManager>(() => HomeManager());
 
   /// ZoomDrawerController
   locator.registerLazySingleton<ZoomDrawerController>(

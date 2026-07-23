@@ -47,17 +47,16 @@ class User {
   int? get userID => id;
 
   factory User.fromJson(Map<String, dynamic> json) {
-    final userType = (json['userType'] ?? json['UserType'])?.toString();
-    final isEmp = json['isEmployee']?.toString() == 'true' || 
-                  json['isEmployee'] == true ||
-                  (json['userDto'] != null && 
-                   (json['userDto']['isEmployee']?.toString() == 'true' || 
-                    json['userDto']['isEmployee'] == true));
-
     // Check if it's the direct API login response (which might have nested userDto, or is the flat userDto map itself)
     final Map<String, dynamic> userMap = json.containsKey('userDto') && json['userDto'] != null
         ? json['userDto'] as Map<String, dynamic>
         : json;
+
+    final userType = (userMap['userType'] ?? userMap['UserType'] ?? json['userType'] ?? json['UserType'])?.toString();
+    final isEmp = userMap['isEmployee']?.toString() == 'true' || 
+                  userMap['isEmployee'] == true ||
+                  json['isEmployee']?.toString() == 'true' || 
+                  json['isEmployee'] == true;
 
     return User(
       id: userMap['id'] != null 

@@ -27,6 +27,7 @@ export 'widgets/custom_dialog.dart';
 export 'widgets/forms_state_handling_widget.dart';
 export 'widgets/life_cycle_widget.dart';
 export 'widgets/observer.dart';
+export 'widgets/skeleton_factory.dart';
 export 'widgets/provider.dart';
 export 'widgets/root.dart';
 export 'widgets/toast_template.dart';
