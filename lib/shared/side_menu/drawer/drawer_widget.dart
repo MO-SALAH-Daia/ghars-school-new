@@ -152,7 +152,15 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         width: 200.sp,
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Text(
-                          '${user.name}',
+                          isAr
+                              ? ((user.nameAr != null &&
+                                        user.nameAr!.trim().isNotEmpty)
+                                    ? user.nameAr!
+                                    : (user.name ?? ''))
+                              : ((user.name != null &&
+                                        user.name!.trim().isNotEmpty)
+                                    ? user.name!
+                                    : (user.nameAr ?? '')),
                           style: TextStyle(
                             color: AppStyle.twilight,
                             fontSize: 14.sp,
@@ -550,8 +558,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 user != null
                                     ? AppStrings.logout
                                     : AppStrings.login,
-                                ) ??
-                                '',
+                              ) ??
+                              '',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -609,4 +617,3 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 }
-

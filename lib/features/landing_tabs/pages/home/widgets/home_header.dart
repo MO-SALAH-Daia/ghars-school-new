@@ -18,7 +18,9 @@ class HomeHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final String welcomeText = isArabic ? 'مرحباً بك' : 'Welcome';
     final String subText = user?.token != null
-        ? (isArabic ? user?.nameAr ?? user?.name ?? '' : user?.name ?? '')
+        ? (isArabic
+            ? ((user!.nameAr != null && user!.nameAr!.trim().isNotEmpty) ? user!.nameAr! : (user!.name ?? ''))
+            : ((user!.name != null && user!.name!.trim().isNotEmpty) ? user!.name! : (user!.nameAr ?? '')))
         : (isArabic ? 'زائرنا العزيز' : 'Dear Guest');
 
     return Padding(
