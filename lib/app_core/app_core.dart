@@ -32,3 +32,4 @@ export 'widgets/provider.dart';
 export 'widgets/root.dart';
 export 'widgets/toast_template.dart';
 export 'widgets/verification_code_widget.dart';
+export '../shared/dialog/app_dialog.dart';

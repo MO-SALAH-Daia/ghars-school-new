@@ -1,7 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 import '../app_core.dart';
 import 'base_response.dart';
@@ -11,14 +11,7 @@ enum HttpMethod { get, post, put, delete }
 abstract class BaseRepository {
   static final interceptors = [
     CustomInterceptor(),
-    PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      compact: true,
-      logPrint: (object) => log(object.toString()),
-    ),
+    AppLoggerInterceptor(),
   ];
 
   // Configure your Dio instance once
@@ -95,6 +88,7 @@ abstract class BaseRepository {
         requestOptions: response?.requestOptions ?? RequestOptions(path: path),
         response: response,
         error: e,
+        message: e.toString(),
         type: DioExceptionType.unknown,
       );
     }
@@ -133,4 +127,93 @@ abstract class BaseRepository {
     dynamic body,
   }) =>
       _execute(method: HttpMethod.delete, path: path, mapper: mapper, body: body);
+}
+
+class AppLoggerInterceptor extends Interceptor {
+  final JsonEncoder _encoder = const JsonEncoder.withIndent('  ');
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    log('╔══════════════════════════════════════════════════════════════════════════════════════════╗');
+    log('║ HTTP REQUEST: [${options.method}] ${options.uri}');
+    log('╟ Headers: ${options.headers}');
+    if (options.data != null) {
+      String requestBody = '';
+      try {
+        requestBody = _encoder.convert(options.data);
+      } catch (_) {
+        requestBody = options.data.toString();
+      }
+      if (requestBody.isNotEmpty) {
+        log('╟ Body:');
+        final lines = requestBody.split('\n');
+        for (final line in lines) {
+          if (line.length > 1000) {
+            log('║ ${line.substring(0, 1000)}... [TRUNCATED]');
+          } else {
+            log('║ $line');
+          }
+        }
+      }
+    }
+    log('╚══════════════════════════════════════════════════════════════════════════════════════════╝');
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    log('╔══════════════════════════════════════════════════════════════════════════════════════════╗');
+    log('║ HTTP RESPONSE [${response.statusCode}] ${response.requestOptions.method} ${response.requestOptions.uri}');
+    log('╟ Headers: ${response.headers.map}');
+    if (response.data != null) {
+      String responseBody = '';
+      try {
+        responseBody = _encoder.convert(response.data);
+      } catch (_) {
+        responseBody = response.data.toString();
+      }
+
+      if (responseBody.isNotEmpty) {
+        // Capping total body string to 3,000 characters to prevent console logs flooding on Base64
+        if (responseBody.length > 3000) {
+          responseBody = '${responseBody.substring(0, 3000)}\n... [TRUNCATED due to length: ${responseBody.length}]';
+        }
+
+        log('╟ Body:');
+        final lines = responseBody.split('\n');
+        for (final line in lines) {
+          log('║ $line');
+        }
+      }
+    }
+    log('╚══════════════════════════════════════════════════════════════════════════════════════════╝');
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    log('╔══════════════════════════════════════════════════════════════════════════════════════════╗');
+    final errDetail = err.message ?? err.error?.toString() ?? err.toString();
+    log('║ HTTP ERROR: $errDetail');
+    if (err.response != null) {
+      log('╟ Status: [${err.response?.statusCode}]');
+      if (err.response?.data != null) {
+        String errorBody = '';
+        try {
+          errorBody = _encoder.convert(err.response?.data);
+        } catch (_) {
+          errorBody = err.response?.data.toString() ?? '';
+        }
+        if (errorBody.isNotEmpty) {
+          log('╟ Body:');
+          final lines = errorBody.split('\n');
+          for (final line in lines) {
+            log('║ $line');
+          }
+        }
+      }
+    }
+    log('╚══════════════════════════════════════════════════════════════════════════════════════════╝');
+    handler.next(err);
+  }
 }

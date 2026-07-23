@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,17 +9,16 @@ import 'package:ghars_school/features/landing_tabs/pages/home/models/gallery_ima
 class HomeCarousel extends StatefulWidget {
   final List<ImagesGallery> images;
 
-  const HomeCarousel({
-    super.key,
-    required this.images,
-  });
+  const HomeCarousel({super.key, required this.images});
 
   @override
   State<HomeCarousel> createState() => _HomeCarouselState();
 }
 
 class _HomeCarouselState extends State<HomeCarousel> {
-  final PageController _carouselController = PageController(viewportFraction: 0.9);
+  final PageController _carouselController = PageController(
+    viewportFraction: 0.9,
+  );
   int _carouselIndex = 0;
   Timer? _carouselTimer;
 
@@ -29,7 +29,7 @@ class _HomeCarouselState extends State<HomeCarousel> {
   }
 
   void _startTimer() {
-    if (_carouselTimer == null && widget.images.isNotEmpty) {
+    if (_carouselTimer == null && widget.images.length > 1) {
       _carouselTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
         if (_carouselController.hasClients) {
           int nextIndex = _carouselIndex + 1;
@@ -100,22 +100,38 @@ class _HomeCarouselState extends State<HomeCarousel> {
                     ],
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: CachedNetworkImage(
-                    imageUrl: img.imageFile ?? '',
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[100],
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 40.sp,
-                        color: Colors.grey[400],
+                  child: () {
+                    final imageUrl = img.imageFile ?? '';
+                    final isValid =
+                        imageUrl.startsWith('http://') ||
+                        imageUrl.startsWith('https://');
+                    if (!isValid) {
+                      return Container(
+                        color: Colors.grey[100],
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 40.sp,
+                          color: Colors.grey[400],
+                        ),
+                      );
+                    }
+                    return CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey[200],
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
-                    ),
-                  ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey[100],
+                        child: Icon(
+                          Icons.broken_image,
+                          size: 40.sp,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    );
+                  }(),
                 ),
               );
             },

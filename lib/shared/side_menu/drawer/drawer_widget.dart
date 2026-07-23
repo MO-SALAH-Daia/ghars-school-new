@@ -1,6 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ghars_school/features/landing_tabs/landing_tabs_manager.dart';
+import 'package:ghars_school/features/onboarding/why_ghars_page.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_item.dart';
 
@@ -9,6 +11,7 @@ import '../../../app_core/app_core.dart';
 /*
 Created by: Mohammad Salah
 Date: Monday 07 March 2022
+Updated: 2026-07-23
 */
 
 AnimationController? innerController;
@@ -53,11 +56,53 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     }
   }
 
+  void _changeLanguage(String currentLang) {
+    final String nextLang = currentLang == 'en' ? 'ar' : 'en';
+    final appLangManager = locator<AppLanguageManager>();
+
+    // Close the drawer before language change to prevent UI glitching during transition
+    ZoomDrawer.of(context)?.close();
+
+    appLangManager.changeLanguage(Locale(nextLang));
+    locator<PrefsService>().appLanguage = nextLang;
+    innerNotifier.value = nextLang;
+  }
+
+  void _showComingSoon(BuildContext context, String title, bool isArabic) {
+    showComingSoonDialog(context, title: title, isArabic: isArabic);
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20.w, right: 20.w, top: 16.h, bottom: 6.h),
+      child: Row(
+        children: [
+          Container(
+            width: 3.w,
+            height: 12.h,
+            decoration: BoxDecoration(
+              color: AppStyle.bayZeroColor,
+              borderRadius: BorderRadius.circular(2.r),
+            ),
+          ),
+          SizedBox(width: 8.w),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.bold,
+              color: AppStyle.twilight.withValues(alpha: 0.6),
+              fontFamily: 'Cairo',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final prefs = context.use<PrefsService>();
-    // final appSettings = context.use<AppSettingsManager>();
-    // final mainTabsManager = context.use<MainTabsManager>();
 
     return SafeArea(
       child: Scaffold(
@@ -76,9 +121,13 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             child: ValueListenableBuilder<String>(
               valueListenable: innerNotifier,
               builder: (context, lang, _) {
+                final user = prefs.userObj;
+                final isAr = lang == 'ar';
+
                 final contentWidget = Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Brand Logo Section
                     Container(
                       margin: const EdgeInsets.only(
                         top: 35,
@@ -94,136 +143,393 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       ),
                     ),
 
-                    if (prefs.userObj != null)
+                    // Logged in User Name or Welcome Title
+                    if (user != null)
                       Container(
                         width: 200.sp,
                         padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Text(
-                          '${prefs.userObj?.name}',
+                          '${user.name}',
                           style: TextStyle(
-                            color: AppStyle.appColor,
-                            fontSize: 13.sp,
+                            color: AppStyle.twilight,
+                            fontSize: 14.sp,
                             height: 1.3,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo',
                           ),
-                          textAlign: TextAlign.center,
+                          textAlign: isAr ? TextAlign.right : TextAlign.left,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+
                     const SizedBox(height: 10),
+
+                    // --- SECTION: الرئيسية (Main) ---
+                    if (user != null) ...[
+                      _buildSectionHeader(isAr ? 'الرئيسية' : 'Main'),
+                      DrawerItemWidget(
+                        title:
+                            context.translate('dashboardTitle') ?? 'Dashboard',
+                        icon: Icon(
+                          Icons.dashboard_rounded,
+                          color: AppStyle.bayZeroColor,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          locator<LandingTabsManager>().tabIndex = 0;
+                          ZoomDrawer.of(context)?.close();
+                        },
+                      ),
+                    ],
+
+                    // --- SECTION: خدمات أولياء الأمور (Parent Services) ---
+                    if (user != null && user.userType == 'Parent') ...[
+                      _buildSectionHeader(
+                        context.translate('parentServices') ??
+                            'Parent Services',
+                      ),
+                      DrawerItemWidget(
+                        title:
+                            context.translate('newStudentForm') ??
+                            'New Student Form',
+                        icon: Icon(
+                          Icons.person_add_alt_1_rounded,
+                          color: AppStyle.blueCyan,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('newStudentForm') ??
+                                'New Student Form',
+                            isAr,
+                          );
+                        },
+                      ),
+                      DrawerItemWidget(
+                        title:
+                            context.translate('availableInterviews') ??
+                            'Available Interviews',
+                        icon: Icon(
+                          Icons.event_available_rounded,
+                          color: AppStyle.mauve,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('availableInterviews') ??
+                                'Available Interviews',
+                            isAr,
+                          );
+                        },
+                      ),
+                      DrawerItemWidget(
+                        title:
+                            context.translate('admissionsTitle') ??
+                            'Admissions',
+                        icon: Icon(
+                          Icons.assignment_rounded,
+                          color: AppStyle.secondaryColor,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('admissionsTitle') ??
+                                'Admissions',
+                            isAr,
+                          );
+                        },
+                      ),
+                      if (user.allStudent != null && user.allStudent! > 0)
+                        DrawerItemWidget(
+                          title:
+                              context.translate('studentsTitle') ?? 'Students',
+                          icon: Icon(
+                            Icons.people_alt_rounded,
+                            color: AppStyle.bayZeroColor,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            locator<LandingTabsManager>().tabIndex = 3;
+                            ZoomDrawer.of(context)?.close();
+                          },
+                        ),
+                      DrawerItemWidget(
+                        title:
+                            context.translate('notifications') ??
+                            'Notifications',
+                        icon: Icon(
+                          Icons.notifications_active_rounded,
+                          color: AppStyle.mauve,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('notifications') ??
+                                'Notifications',
+                            isAr,
+                          );
+                        },
+                      ),
+                    ],
+
+                    // --- SECTION: خدمات الموظفين (Employee Services) ---
+                    if (user != null && user.userType == 'Employee') ...[
+                      _buildSectionHeader(
+                        context.translate('employeeServices') ??
+                            'Employee Services',
+                      ),
+
+                      DrawerItemWidget(
+                        title:
+                            context.translate('notifications') ??
+                            'Notifications',
+                        icon: Icon(
+                          Icons.notifications_active_rounded,
+                          color: AppStyle.mauve,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('notifications') ??
+                                'Notifications',
+                            isAr,
+                          );
+                        },
+                      ),
+
+                      if (user.roles != null &&
+                          user.roles!.split(',').contains('MobileAdmin')) ...[
+                        DrawerItemWidget(
+                          title:
+                              context.translate('admissionsTitle') ??
+                              'Admissions',
+                          icon: Icon(
+                            Icons.admin_panel_settings_rounded,
+                            color: AppStyle.secondaryColor,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            _showComingSoon(
+                              context,
+                              context.translate('admissionsTitle') ??
+                                  'Admissions',
+                              isAr,
+                            );
+                          },
+                        ),
+                        DrawerItemWidget(
+                          title:
+                              context.translate('admissionSchedule') ??
+                              'Admission Schedule',
+                          icon: Icon(
+                            Icons.calendar_month_rounded,
+                            color: AppStyle.blueCyan,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            _showComingSoon(
+                              context,
+                              context.translate('admissionSchedule') ??
+                                  'Admission Schedule',
+                              isAr,
+                            );
+                          },
+                        ),
+                        DrawerItemWidget(
+                          title:
+                              context.translate('interviewsSchedule') ??
+                              'Interviews Schedule',
+                          icon: Icon(
+                            Icons.groups_rounded,
+                            color: AppStyle.mauve,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            _showComingSoon(
+                              context,
+                              context.translate('interviewsSchedule') ??
+                                  'Interviews Schedule',
+                              isAr,
+                            );
+                          },
+                        ),
+                      ],
+
+                      if (user.roles != null &&
+                          user.roles!
+                              .split(',')
+                              .contains('BlockAttendance')) ...[
+                        DrawerItemWidget(
+                          title:
+                              context.translate('blockAttendance') ??
+                              'Block Attendance',
+                          icon: Icon(
+                            Icons.co_present_rounded,
+                            color: AppStyle.bayZeroColor,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            _showComingSoon(
+                              context,
+                              context.translate('blockAttendance') ??
+                                  'Block Attendance',
+                              isAr,
+                            );
+                          },
+                        ),
+                        DrawerItemWidget(
+                          title:
+                              context.translate('dailyAbsence') ??
+                              'Daily Absence',
+                          icon: Icon(
+                            Icons.person_off_rounded,
+                            color: AppStyle.secondaryColor,
+                            size: 20.sp,
+                          ),
+                          onClick: () {
+                            _showComingSoon(
+                              context,
+                              context.translate('dailyAbsence') ??
+                                  'Daily Absence',
+                              isAr,
+                            );
+                          },
+                        ),
+                      ],
+                    ],
+
+                    // --- SECTION: الإعدادات العامة (General) ---
+                    _buildSectionHeader(
+                      context.translate('generalSettings') ??
+                          'General Settings',
+                    ),
+
                     DrawerItemWidget(
-                      title: '${context.translate(AppStrings.home)}',
-                      // icon: SvgPicture.asset(
-                      //   AppAssets.HOME_SVG,
-                      //   // height: 14.sp,
-                      //   color: AppStyle.begooOrange,
-                      // ),
+                      title: context.translate('whyGhars') ?? 'Why Ghars?',
                       icon: Icon(
-                        // FontAwesomeIcons.home,
-                        Icons.home,
-                        color: AppStyle.appColor,
+                        Icons.help_outline_rounded,
+                        color: AppStyle.blueCyan,
+                        size: 20.sp,
                       ),
                       onClick: () {
                         ZoomDrawer.of(context)?.close();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const WhyGharsPage(),
+                          ),
+                        );
                       },
                     ),
-                    if (prefs.userObj != null)
+
+                    DrawerItemWidget(
+                      title: context.translate('aboutUs') ?? 'About Us',
+                      icon: Icon(
+                        Icons.info_outline_rounded,
+                        color: AppStyle.mauve,
+                        size: 20.sp,
+                      ),
+                      onClick: () {
+                        _showComingSoon(
+                          context,
+                          context.translate('aboutUs') ?? 'About Us',
+                          isAr,
+                        );
+                      },
+                    ),
+
+                    if (user != null)
                       DrawerItemWidget(
-                        title: '${context.translate(AppStrings.myAccount)}',
-                        // icon: SvgPicture.asset(
-                        //   AppAssets.HOME_SVG,
-                        //   // height: 14.sp,
-                        //   color: AppStyle.begooOrange,
-                        // ),
+                        title:
+                            context.translate('changePassword') ??
+                            'Change Password',
                         icon: Icon(
-                          // FontAwesomeIcons.home,
-                          Icons.person,
-                          color: AppStyle.appColor,
+                          Icons.lock_reset_rounded,
+                          color: AppStyle.twilight,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('changePassword') ??
+                                'Change Password',
+                            isAr,
+                          );
+                        },
+                      ),
+
+                    if (user != null)
+                      DrawerItemWidget(
+                        title:
+                            context.translate(AppStrings.deleteAccount) ??
+                            'Delete Account',
+                        icon: Icon(
+                          Icons.delete_forever_rounded,
+                          color: AppStyle.secondaryColor,
+                          size: 20.sp,
                         ),
                         onClick: () {
                           ZoomDrawer.of(context)?.close();
-                          // Navigator.of(context)
-                          //     .pushNamed(AppRoutesNames.PROFILE_PAGE);
+                          logoutAndLoginDialogAndDeleteAccount(
+                            context,
+                            dialogAction: DialogAction.deleteAccount,
+                            onClickLogoutBtn: () {
+                              prefs.clearAllPrefs();
+                              Navigator.of(context).pushNamedAndRemoveUntil(
+                                AppRoutesNames.onboardingPage,
+                                (Route<dynamic> route) => false,
+                              );
+                            },
+                          );
                         },
                       ),
+
                     DrawerItemWidget(
-                      title: '${context.translate(AppStrings.search)}',
+                      title: isAr ? 'English' : 'العربية',
                       icon: Icon(
-                        // FontAwesomeIcons.shoppingBag,
-                        Icons.shopping_bag,
-                        color: AppStyle.appColor,
+                        Icons.language_rounded,
+                        color: AppStyle.blueCyan,
+                        size: 20.sp,
                       ),
                       onClick: () {
-                        ZoomDrawer.of(context)?.close();
-                        // Navigator.of(context)
-                        //     .pushNamed(AppRoutesNames.MY_ORDERS_PAGE);
+                        _changeLanguage(lang);
                       },
                     ),
-                    DrawerItemWidget(
-                      title: '${context.translate(AppStrings.discount)}',
-                      // icon: const Icon(
-                      //   // FontAwesomeIcons.percentage ,
-                      //   Icons.discount_sharp,
-                      // ),
-                      icon: Icon(
-                        // FontAwesomeIcons.percentage ,
-                        Icons.settings,
-                        color: AppStyle.appColor,
+
+                    if (user == null)
+                      DrawerItemWidget(
+                        title:
+                            context.translate('registrationForm') ??
+                            'Registration Form',
+                        icon: Icon(
+                          Icons.person_add_alt_rounded,
+                          color: AppStyle.bayZeroColor,
+                          size: 20.sp,
+                        ),
+                        onClick: () {
+                          _showComingSoon(
+                            context,
+                            context.translate('registrationForm') ??
+                                'Registration Form',
+                            isAr,
+                          );
+                        },
                       ),
-                      onClick: () {
-                        ZoomDrawer.of(context)?.close();
-                        // mainTabsManager.isFromAds = true;
-                      },
-                    ),
-                    // DrawerItemWidget(
-                    //     title: '${context.translate(AppStrings.CouponCodes)}',
-                    //     icon: const Icon(
-                    //       // FontAwesomeIcons.briefcase,
-                    //       Icons.discount,
-                    //       color: AppStyle.begooOrange,
-                    //     ),
-                    //     onClick: () {
-                    //       ZoomDrawer.of(context)?.close();
-                    //     }),
-                    DrawerItemWidget(
-                      title: '${context.translate(AppStrings.wallet)}',
-                      icon: Icon(Icons.wallet, color: AppStyle.appColor),
-                      onClick: () {
-                        ZoomDrawer.of(context)?.close();
-                        // Navigator.of(context)
-                        //     .pushNamed(AppRoutesNames.MyWalletPage);
-                      },
-                    ),
-                    DrawerItemWidget(
-                      title: '${context.translate(AppStrings.contactUs)}',
-                      icon: Icon(
-                        // FontAwesomeIcons.chalkboardTeacher,
-                        Icons.chat_bubble,
-                        color: AppStyle.appColor,
-                      ),
-                      onClick: () {
-                        ZoomDrawer.of(context)?.close();
-                        // Navigator.of(context)
-                        //     .pushNamed(AppRoutesNames.ContactUsPage);
-                      },
-                    ),
-                    DrawerItemWidget(
-                      title: '${context.translate(AppStrings.notifications)}',
-                      icon: Icon(Icons.notifications, color: AppStyle.appColor),
-                      onClick: () {
-                        ZoomDrawer.of(context)?.close();
-                        // Navigator.of(context)
-                        //     .pushNamed(AppRoutesNames.NOTIFICATIONS_PAGE);
-                      },
-                    ),
+
                     const SizedBox(height: 30),
+
+                    // Log in / Log out button
                     Container(
-                      height: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      height: 48,
+                      width: double.infinity,
                       margin: const EdgeInsets.only(
                         bottom: 50,
-                        top: 50,
+                        top: 20,
                         left: 20,
                         right: 20,
                       ),
@@ -233,54 +539,44 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           backgroundColor: AppStyle.appColor,
-                          shadowColor: AppStyle.appColor,
-                          // fixedSize: const Size.fromWidth(120),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 30,
-                          ),
+                          shadowColor: AppStyle.appColor.withValues(alpha: 0.3),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
                         ),
                         child: Text(
-                          '${context.translate(prefs.userObj != null ? AppStrings.logout : AppStrings.login)}',
+                          context.translate(
+                                user != null
+                                    ? AppStrings.logout
+                                    : AppStrings.login,
+                              ) ??
+                              '',
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Cairo',
                           ),
                           textAlign: TextAlign.center,
                         ),
                         onPressed: () {
-                          // if (prefs.userObj != null) {
-                          //   logoutFirstDialog(context, onClickLoginBtn: () {
-                          //     prefs.removeUserObj();
-                          //     googleSignInService.signOut();
-                          //     facebookSignInService.logout();
-                          //     appSettings.refreshCartCount();
-                          //
-                          //     _fcm.unsubscribeFromTopic('IosEn${prefs.currencyId}');
-                          //     _fcm.unsubscribeFromTopic('IosAr${prefs.currencyId}');
-                          //     _fcm.unsubscribeFromTopic(
-                          //         'AndroidEn${prefs.currencyId}');
-                          //     _fcm.unsubscribeFromTopic(
-                          //         'AndroidAr${prefs.currencyId}');
-                          //
-                          //     if (Platform.isIOS) {
-                          //       _fcm.subscribeToTopic('IOS');
-                          //     } else if (Platform.isAndroid) {
-                          //       _fcm.subscribeToTopic('Android');
-                          //     }
-                          //
-                          //     Navigator.of(context).pushNamedAndRemoveUntil(
-                          //         AppRoutesNames.LoginPage,
-                          //         (Route<dynamic> route) => false);
-                          //   }, onClickCancelBtn: () {
-                          //     Navigator.of(context).pop();
-                          //   });
-                          // } else {
-                          //   Navigator.of(context).pushNamedAndRemoveUntil(
-                          //       AppRoutesNames.LoginPage,
-                          //       (Route<dynamic> route) => false);
-                          // }
+                          ZoomDrawer.of(context)?.close();
+                          if (user != null) {
+                            logoutAndLoginDialogAndDeleteAccount(
+                              context,
+                              dialogAction: DialogAction.logout,
+                              onClickLogoutBtn: () {
+                                prefs.clearAllPrefs();
+                                Navigator.of(context).pushNamedAndRemoveUntil(
+                                  AppRoutesNames.onboardingPage,
+                                  (Route<dynamic> route) => false,
+                                );
+                              },
+                            );
+                          } else {
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                              AppRoutesNames.onboardingPage,
+                              (Route<dynamic> route) => false,
+                            );
+                          }
                         },
                       ),
                     ),

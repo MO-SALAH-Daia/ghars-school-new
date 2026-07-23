@@ -9,7 +9,6 @@ import 'package:ghars_school/features/landing_tabs/pages/home/models/home_dashbo
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/employee_dashboard.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/guest_dashboard.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/home_carousel.dart';
-import 'package:ghars_school/features/landing_tabs/pages/home/widgets/home_header.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/parent_dashboard.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,17 +28,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showComingSoon(String title, bool isArabic) {
-    showDialog(
-      context: context,
-      builder: (context) => CustomDialog(
-        title: isArabic ? 'قريباً' : 'Coming Soon',
-        description: isArabic
-            ? 'ميزة $title ستتوفر في التحديث القادم.'
-            : '$title feature will be available in the next update.',
-        confirmBtnTxt: isArabic ? 'حسناً' : 'OK',
-        onClickConfirmBtn: () => Navigator.pop(context),
-      ),
-    );
+    showComingSoonDialog(context, title: title, isArabic: isArabic);
   }
 
   @override
@@ -113,9 +102,8 @@ class _HomePageState extends State<HomePage> {
                   return CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     slivers: [
-                      // Header Section
                       SliverToBoxAdapter(
-                        child: HomeHeader(user: user, isArabic: isArabic),
+                        child: SizedBox(height: 12.h),
                       ),
 
                       // Carousel Section

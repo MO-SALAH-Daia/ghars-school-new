@@ -174,9 +174,10 @@ class _GharsSchoolState extends State<GharsSchool> {
                 },
 
             home: locator<PrefsService>().userObj != null
-                ? const ContainerPageWithDrawer(
-                    mainScreen: LandingTabsWidget(),
-                    menuScreen: DrawerWidget(),
+                ? ContainerPageWithDrawer(
+                    key: ValueKey(prefs.appLanguage),
+                    mainScreen: const LandingTabsWidget(),
+                    menuScreen: const DrawerWidget(),
                   )
                 : ContainerPageWithDrawer(
                     key: ValueKey(prefs.appLanguage),

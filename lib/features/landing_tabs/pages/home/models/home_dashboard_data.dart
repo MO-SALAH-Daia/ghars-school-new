@@ -12,4 +12,16 @@ class HomeDashboardData {
     this.parentData,
     this.employeeData,
   });
+
+  HomeDashboardData copyWith({
+    List<ImagesGallery>? images,
+    ParentDashboardModel? parentData,
+    EmployeeDashboardModel? employeeData,
+  }) {
+    return HomeDashboardData(
+      images: images ?? this.images,
+      parentData: parentData ?? this.parentData,
+      employeeData: employeeData ?? this.employeeData,
+    );
+  }
 }

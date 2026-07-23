@@ -131,5 +131,18 @@
   "whoUsDesc": "Ghars Bilingual School was established in 2013. It is the third product of Al-Itqan Educational Company, which chose this name for it, in the belief that good planting in education yields souls, God willing: It is distinguished by its well-established Islamic faith, capable of creativity and responsibility, beneficial to itself and those around it, and stable in the face of changes. Ghers School serves educational stages from nursery school to secondary stage for both categories (males and females) taking into account the comprehensive development of its students in all aspects of personality: social, emotional, physical, cognitive, and faith.",
   "whatWeDoDesc": "Ghars School is keen to provide the best international curricula, keep abreast of global education developments, take into account the interest in the Arabic language, as the school is bilingual, in addition to promoting Islamic educational values and adding educational and recreational activities that in turn complement education and complement the educational system.",
   "discoverSchoolHighlights": "Discover the school photo album and get to know our outstanding educational environment and various student activities.",
-  "clickToZoom": "Tap on any image to zoom"
+  "clickToZoom": "Tap on any image to zoom",
+  "dashboardTitle": "Dashboard",
+  "newStudentForm": "New Student Form",
+  "availableInterviews": "Available Interviews",
+  "studentsTitle": "Students",
+  "admissionsTitle": "Admissions",
+  "admissionSchedule": "Admission Schedule",
+  "interviewsSchedule": "Interviews Schedule",
+  "blockAttendance": "Block Attendance",
+  "dailyAbsence": "Daily Absence",
+  "registrationForm": "New Parent Form",
+  "parentServices": "Parent Services",
+  "employeeServices": "Employee Services",
+  "generalSettings": "General Settings"
 }
