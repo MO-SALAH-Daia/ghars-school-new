@@ -117,5 +117,19 @@
   "back": "Back",
   "services": "Services",
   "calendar": "Calendar",
-  "studentProfile": "Student Profile"
+  "studentProfile": "Student Profile",
+  "whyGhars": "Why Ghars?",
+  "admissionForm": "Admission Form",
+  "welcomeToGhars": "Welcome to Ghars Bilingual School",
+  "whoUs": "Who We Are",
+  "whatWEDo": "What We Do",
+  "ourGoals": "Our Goals",
+  "loginToYourAccount": "Log In to Your Account",
+  "discoverGhars": "Discover Ghars",
+  "whyGharsDesc": "Good planting in education yields spirits that are:\n- Unique in their solid Islamic beliefs.\n- Creative and responsible.\n- Beneficial for themselves and others.\n- Stable in facing changes.",
+  "whyGharsDesc2": "What Ghars Offers?\nSchool depends on:\n- Curriculum in the Arabic Language for the following subjects (Arabic language, Islamic Studies, Holy Quran and Social Studies).\n- Extracurricular programs supporting Arabic language and Islamic Studies.\n- Curriculum for memorizing and understanding the Holy Quran.\n- Modern American curriculum following the Common Core Standards (CCS) to achieve foundational skills in reading, writing in English and math.\n- Adopting Next Generation Science Standards (NGSS) for the science curriculum.\n- A distinguished educational staff that includes a group of experienced and competent people who have the ability to cope with the rapid changes in the field of education.\n- A safe learning environment that cares of students' psychological, social and academic needs.\n- A distinguished school building (library, indoor and outdoor playgrounds, indoor swimming pools, science laboratories and Art room).\n- Non-mixed classes for all stages except kindergarten stage.\n- Modern educational tools that are compatible with modern technological development.\n- Interest in the different recreational and social activities.\n- Official holidays are compatible with the Ministry of Education.",
+  "whoUsDesc": "Ghars Bilingual School was established in 2013. It is the third product of Al-Itqan Educational Company, which chose this name for it, in the belief that good planting in education yields souls, God willing: It is distinguished by its well-established Islamic faith, capable of creativity and responsibility, beneficial to itself and those around it, and stable in the face of changes. Ghers School serves educational stages from nursery school to secondary stage for both categories (males and females) taking into account the comprehensive development of its students in all aspects of personality: social, emotional, physical, cognitive, and faith.",
+  "whatWeDoDesc": "Ghars School is keen to provide the best international curricula, keep abreast of global education developments, take into account the interest in the Arabic language, as the school is bilingual, in addition to promoting Islamic educational values and adding educational and recreational activities that in turn complement education and complement the educational system.",
+  "discoverSchoolHighlights": "Discover the school photo album and get to know our outstanding educational environment and various student activities.",
+  "clickToZoom": "Tap on any image to zoom"
 }

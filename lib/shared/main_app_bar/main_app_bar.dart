@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
 
@@ -79,7 +80,7 @@ class MainAppBar extends StatelessWidget {
                   },
             )
           : IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
+              icon: Icon(Icons.arrow_back_ios, size: 18.sp),
               onPressed:
                   onBackBtnClicked ??
                   () {
@@ -93,9 +94,10 @@ class MainAppBar extends StatelessWidget {
             )
           : Text(
               title!,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
               ),
             ),
       actions: [

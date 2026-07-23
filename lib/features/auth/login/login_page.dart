@@ -131,6 +131,27 @@ class _LoginPageState extends State<LoginPage> {
         onTap: () => removeFocus(context),
         child: Stack(
           children: [
+            if (Navigator.of(context).canPop())
+              Positioned(
+                top: 20.h,
+                left: prefs.appLanguage == 'ar' ? null : 16.w,
+                right: prefs.appLanguage == 'ar' ? 16.w : null,
+                child: SafeArea(
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white.withOpacity(0.9),
+                    child: IconButton(
+                      icon: Icon(
+                        prefs.appLanguage == 'ar'
+                            ? Icons.arrow_back
+                            : Icons.arrow_back_ios,
+                        color: AppStyle.appColor,
+                        size: 20.sp,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                ),
+              ),
             // Background organic gradient with soft glows
             Container(
               decoration: const BoxDecoration(
@@ -361,8 +382,7 @@ class _LoginPageState extends State<LoginPage> {
                                             child: TextButton(
                                               child: Text(
                                                 context.translate(
-                                                      AppStrings
-                                                          .forgotYourPassword,
+                                                      AppStrings.changePassword,
                                                     ) ??
                                                     '',
                                                 style: TextStyle(
@@ -374,7 +394,7 @@ class _LoginPageState extends State<LoginPage> {
                                               onPressed: () {
                                                 Navigator.of(context).pushNamed(
                                                   AppRoutesNames
-                                                      .forgotPasswordPage,
+                                                      .changePasswordPage,
                                                 );
                                               },
                                             ),

@@ -20,6 +20,7 @@ class ContainerPageWithDrawer extends StatelessWidget {
     final prefs = context.use<PrefsService>();
 
     return ZoomDrawer(
+      key: ValueKey(prefs.appLanguage),
       controller: locator<ZoomDrawerController>(),
       style: DrawerStyle.style1,
       openCurve: Curves.fastOutSlowIn,

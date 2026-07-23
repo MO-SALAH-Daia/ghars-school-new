@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
+import 'package:ghars_school/features/landing_tabs/landing_tabs_widget.dart';
+import 'package:ghars_school/features/onboarding/onboarding_drawer.dart';
+import 'package:ghars_school/features/onboarding/onboarding_page.dart';
 import 'package:ghars_school/shared/side_menu/container_page_with_drawer.dart';
+import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_core/app_core.dart';
-import 'features/auth/login/login_page.dart';
-import 'features/landing_tabs/landing_tabs_widget.dart';
 
 const String debugImage1 =
     'https://www.redseaholidays.co.uk/Images/Header_715x240_SAH.png';
@@ -177,7 +178,11 @@ class _GharsSchoolState extends State<GharsSchool> {
                     mainScreen: LandingTabsWidget(),
                     menuScreen: DrawerWidget(),
                   )
-                : const LoginPage(),
+                : ContainerPageWithDrawer(
+                    key: ValueKey(prefs.appLanguage),
+                    mainScreen: const OnboardingPage(),
+                    menuScreen: const OnboardingDrawerWidget(),
+                  ),
 
             routes: Routes.routes,
           ),
