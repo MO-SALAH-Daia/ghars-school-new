@@ -57,9 +57,25 @@ class PrefsService {
     _preferences!.remove(key);
   }
 
-  // clear all Prefs
+  /// Clears only user session data (user object, authorization token, cart count)
+  /// while preserving preferences like appLanguage, onboardingSeen, etc.
+  void clearUserSession() {
+    _removeFromPrefs(user);
+    _removeFromPrefs(authorization);
+    _removeFromPrefs(cartCount);
+  }
+
+  // clear all Prefs (preserves app language setting)
   void clearAllPrefs() {
+    final currentLang = appLanguage;
+    final onboarding = isOnboardingSeen;
     _preferences!.clear();
+    if (currentLang.isNotEmpty) {
+      appLanguage = currentLang;
+    }
+    if (onboarding) {
+      isOnboardingSeen = onboarding;
+    }
   }
 
   // getter for App language.

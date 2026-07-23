@@ -479,7 +479,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                             context,
                             dialogAction: DialogAction.deleteAccount,
                             onClickLogoutBtn: () {
-                              prefs.clearAllPrefs();
+                              prefs.clearUserSession();
                               Navigator.of(context).pushNamedAndRemoveUntil(
                                 AppRoutesNames.onboardingPage,
                                 (Route<dynamic> route) => false,
@@ -564,7 +564,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                               context,
                               dialogAction: DialogAction.logout,
                               onClickLogoutBtn: () {
-                                prefs.clearAllPrefs();
+                                prefs.clearUserSession();
                                 Navigator.of(context).pushNamedAndRemoveUntil(
                                   AppRoutesNames.onboardingPage,
                                   (Route<dynamic> route) => false,
