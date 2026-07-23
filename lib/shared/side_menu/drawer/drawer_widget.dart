@@ -538,11 +538,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     Container(
                       height: 48,
                       width: double.infinity,
-                      margin: const EdgeInsets.only(
+                      margin: EdgeInsets.only(
                         bottom: 50,
                         top: 20,
-                        left: 20,
-                        right: 20,
+                        left: 50.sp,
+                        right: 50.sp,
                       ),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
