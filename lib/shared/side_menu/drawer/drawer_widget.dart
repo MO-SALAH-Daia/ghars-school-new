@@ -14,12 +14,6 @@ Date: Monday 07 March 2022
 Updated: 2026-07-23
 */
 
-AnimationController? innerController;
-
-final ValueNotifier<String> innerNotifier = ValueNotifier<String>(
-  locator<PrefsService>().appLanguage,
-);
-
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
 
@@ -29,6 +23,14 @@ class DrawerWidget extends StatefulWidget {
 
 class _DrawerWidgetState extends State<DrawerWidget> {
   ValueNotifier<DrawerState>? _stateNotifier;
+  AnimationController? _innerController;
+  late final ValueNotifier<String> _langNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _langNotifier = ValueNotifier<String>(locator<PrefsService>().appLanguage);
+  }
 
   @override
   void didChangeDependencies() {
@@ -44,15 +46,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   void dispose() {
     _stateNotifier?.removeListener(_onStateChanged);
+    _langNotifier.dispose();
     super.dispose();
   }
 
   void _onStateChanged() {
     final state = _stateNotifier?.value;
     if (state == DrawerState.opening) {
-      innerController?.forward();
+      _innerController?.forward();
     } else if (state == DrawerState.closing) {
-      innerController?.reverse();
+      _innerController?.reverse();
     }
   }
 
@@ -65,7 +68,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
 
     appLangManager.changeLanguage(Locale(nextLang));
     locator<PrefsService>().appLanguage = nextLang;
-    innerNotifier.value = nextLang;
+    _langNotifier.value = nextLang;
   }
 
   void _showComingSoon(BuildContext context, String title, bool isArabic) {
@@ -119,7 +122,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: ValueListenableBuilder<String>(
-              valueListenable: innerNotifier,
+              valueListenable: _langNotifier,
               builder: (context, lang, _) {
                 final user = prefs.userObj;
                 final isAr = lang == 'ar';
@@ -547,8 +550,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                                 user != null
                                     ? AppStrings.logout
                                     : AppStrings.login,
-                              ) ??
-                              '',
+                                ) ??
+                                '',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -587,14 +590,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ? SlideInLeft(
                         manualTrigger: true,
                         controller: (controller) =>
-                            innerController = controller,
+                            _innerController = controller,
                         duration: const Duration(milliseconds: 500),
                         child: contentWidget,
                       )
                     : SlideInRight(
                         manualTrigger: true,
                         controller: (controller) =>
-                            innerController = controller,
+                            _innerController = controller,
                         duration: const Duration(milliseconds: 500),
                         child: contentWidget,
                       );
@@ -606,3 +609,4 @@ class _DrawerWidgetState extends State<DrawerWidget> {
     );
   }
 }
+

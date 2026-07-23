@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
@@ -13,6 +14,8 @@ class OnboardingDrawerWidget extends StatefulWidget {
 }
 
 class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
+  ValueNotifier<DrawerState>? _stateNotifier;
+  AnimationController? _innerController;
   late final ValueNotifier<String> _langNotifier;
 
   @override
@@ -22,9 +25,30 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final state = ZoomDrawer.of(context)?.stateNotifier;
+    if (state != _stateNotifier) {
+      _stateNotifier?.removeListener(_onStateChanged);
+      _stateNotifier = state;
+      _stateNotifier?.addListener(_onStateChanged);
+    }
+  }
+
+  @override
   void dispose() {
+    _stateNotifier?.removeListener(_onStateChanged);
     _langNotifier.dispose();
     super.dispose();
+  }
+
+  void _onStateChanged() {
+    final state = _stateNotifier?.value;
+    if (state == DrawerState.opening) {
+      _innerController?.forward();
+    } else if (state == DrawerState.closing) {
+      _innerController?.reverse();
+    }
   }
 
   void _changeLanguage(String currentLang) {
@@ -59,7 +83,7 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
               valueListenable: _langNotifier,
               builder: (context, lang, _) {
                 final bool isAr = lang == 'ar';
-                return Padding(
+                final contentWidget = Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +120,6 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
                         ),
                       ),
                       Divider(
-                        // height: 35.h,
                         color: Colors.grey.withOpacity(0.1),
                       ),
 
@@ -117,7 +140,6 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
                           );
                         },
                       ),
-                      // SizedBox(height: 10.h),
 
                       // Admission Form
                       DrawerItemWidget(
@@ -133,7 +155,6 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
                           ZoomDrawer.of(context)?.close();
                         },
                       ),
-                      // SizedBox(height: 10.h),
 
                       // Language Toggle
                       DrawerItemWidget(
@@ -147,7 +168,6 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
                           _changeLanguage(lang);
                         },
                       ),
-                      // SizedBox(height: 10.h),
 
                       // Login
                       DrawerItemWidget(
@@ -164,10 +184,25 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
                           ).pushNamed(AppRoutesNames.loginPage);
                         },
                       ),
-                      // SizedBox(height: 40.h),
                     ],
                   ),
                 );
+
+                return lang == "en"
+                    ? SlideInLeft(
+                        manualTrigger: true,
+                        controller: (controller) =>
+                            _innerController = controller,
+                        duration: const Duration(milliseconds: 500),
+                        child: contentWidget,
+                      )
+                    : SlideInRight(
+                        manualTrigger: true,
+                        controller: (controller) =>
+                            _innerController = controller,
+                        duration: const Duration(milliseconds: 500),
+                        child: contentWidget,
+                      );
               },
             ),
           ),
@@ -176,3 +211,4 @@ class _OnboardingDrawerWidgetState extends State<OnboardingDrawerWidget> {
     );
   }
 }
+

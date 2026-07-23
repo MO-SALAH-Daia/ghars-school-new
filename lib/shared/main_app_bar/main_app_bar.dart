@@ -1,8 +1,8 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
-import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
 
 import '../../app_core/app_core.dart';
 
@@ -34,7 +34,6 @@ class MainAppBar extends StatelessWidget {
 
   /// defaultOnDrawerBtnClicked
   _defaultOnDrawerBtnClicked(context) {
-    innerNotifier.value = locator<PrefsService>().appLanguage;
     ZoomDrawer.of(context)?.toggle();
   }
 
