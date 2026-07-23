@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
@@ -33,11 +34,8 @@ class MainAppBar extends StatelessWidget {
 
   /// defaultOnDrawerBtnClicked
   _defaultOnDrawerBtnClicked(context) {
-    // Scaffold.of(context).openDrawer();
     innerNotifier.value = locator<PrefsService>().appLanguage;
     ZoomDrawer.of(context)?.toggle();
-
-    /// TODO: Implement DefaultOnDrawerBtnClicked
   }
 
   _defaultOnNotificationsBtnClicked(context) {
@@ -54,19 +52,32 @@ class MainAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final cartCountManager = context.use<CartCountManager>();
     return AppBar(
       centerTitle: true,
       backgroundColor: Colors.transparent,
       elevation: 0,
       iconTheme: const IconThemeData(color: Colors.white),
       actionsIconTheme: const IconThemeData(color: Colors.white),
-      flexibleSpace: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppStyle.appColor, AppStyle.blueCyan],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+      flexibleSpace: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16.0, sigmaY: 16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppStyle.appColor.withValues(alpha: 0.85),
+                  AppStyle.blueCyan.withValues(alpha: 0.85),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  width: 1.2,
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -98,50 +109,19 @@ class MainAppBar extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
+                fontFamily: 'Cairo',
               ),
             ),
       actions: [
         if (hasNotificationBtn)
           IconButton(
-            icon: const Icon(Icons.notifications, color: Colors.white),
+            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
             onPressed:
                 onNotificationsBtnClicked ??
                 () {
                   _defaultOnNotificationsBtnClicked(context);
                 },
           ),
-        // if (hasCartBtn)
-        // ValueListenableBuilder<int>(
-        //     valueListenable: cartCountManager.cartCountNotifier,
-        //     builder: (context, value, _) {
-        //       return IconButton(
-        //         icon:  badges.Badge(
-        //           showBadge: value > 0,
-        //
-        //           badgeStyle: badges.BadgeStyle(
-        //             badgeColor: Colors.grey[800]!,
-        //           ),
-        //           badgeAnimation:const badges.BadgeAnimation.scale(
-        //             animationDuration: Duration(seconds: 1),
-        //             colorChangeAnimationDuration: Duration(seconds: 1),
-        //             loopAnimation: false,
-        //             curve: Curves.fastOutSlowIn,
-        //             colorChangeAnimationCurve: Curves.easeInCubic,
-        //           ),
-        //           // animationType: BadgeAnimationType.scale,
-        //           badgeContent: Text('$value',
-        //               style: const TextStyle(color: Colors.white)),
-        //           child: const Icon(
-        //             Icons.shopping_cart,
-        //             color: AppStyle.begooOrange,
-        //           ),
-        //         ),
-        //         onPressed: onCartBtnClicked ??
-        //             () {
-        //               _defaultOnCartBtnClicked(context);
-        //             },
-        //       );
-        //     }),
       ],
     );
   }
