@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/models/calendar_event_model.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/widgets/calendar_events_list_widget.dart';
@@ -44,16 +43,6 @@ class _CalendarPageState extends State<CalendarPage> {
     return fallbackColors[colorIndex];
   }
 
-  String _formatDate(String? dateStr, bool isAr) {
-    if (dateStr == null || dateStr.isEmpty) return "";
-    try {
-      final DateTime date = DateTime.parse(dateStr);
-      return DateFormat.yMMMMd(isAr ? 'ar' : 'en').format(date);
-    } catch (e) {
-      return dateStr;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final prefs = context.use<PrefsService>();
@@ -61,7 +50,9 @@ class _CalendarPageState extends State<CalendarPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xfff8faf6),
+      backgroundColor: isDark
+          ? const Color(0xFF121212)
+          : const Color(0xfff8faf6),
       body: Stack(
         children: [
           // Background organic gradient with soft glows (same as home)
@@ -69,11 +60,7 @@ class _CalendarPageState extends State<CalendarPage> {
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color(0xffedf4e8),
-                    Color(0xfff5f8f3),
-                    Colors.white,
-                  ],
+                  colors: [Color(0xffedf4e8), Color(0xfff5f8f3), Colors.white],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -126,11 +113,16 @@ class _CalendarPageState extends State<CalendarPage> {
                       child: FadeInDown(
                         duration: const Duration(milliseconds: 600),
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
                           child: Container(
                             padding: EdgeInsets.only(bottom: 15.h),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                              color: isDark
+                                  ? const Color(0xFF1E1E1E)
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(24.r),
                               boxShadow: isDark
                                   ? []
@@ -142,120 +134,142 @@ class _CalendarPageState extends State<CalendarPage> {
                                       ),
                                     ],
                             ),
-                          child: TableCalendar<CalendarEventModel>(
-                            firstDay: DateTime.utc(2020, 1, 1),
-                            lastDay: DateTime.utc(2030, 12, 31),
-                            focusedDay: _focusedDay,
-                            locale: isArabic ? 'ar' : 'en',
-                            daysOfWeekVisible: true,
-                            daysOfWeekHeight: 45.h,
-                            rowHeight: 52.h,
-                            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                            onDaySelected: (selectedDay, focusedDay) {
-                              setState(() {
-                                _selectedDay = selectedDay;
-                                _focusedDay = focusedDay;
-                              });
-                            },
-                            eventLoader: _manager.getEventsForDay,
-                            calendarStyle: CalendarStyle(
-                              outsideDaysVisible: false,
-                              todayDecoration: BoxDecoration(
-                                color: AppStyle.appColor.withOpacity(0.15),
-                                shape: BoxShape.circle,
-                                border: Border.all(color: AppStyle.appColor, width: 1.5),
-                              ),
-                              todayTextStyle: TextStyle(
-                                color: AppStyle.appColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              selectedDecoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppStyle.appColor,
-                                    AppStyle.appColor.withOpacity(0.8)
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppStyle.appColor.withOpacity(0.3),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 4),
+                            child: TableCalendar<CalendarEventModel>(
+                              firstDay: DateTime.utc(2020, 1, 1),
+                              lastDay: DateTime.utc(2030, 12, 31),
+                              focusedDay: _focusedDay,
+                              locale: isArabic ? 'ar' : 'en',
+                              daysOfWeekVisible: true,
+                              daysOfWeekHeight: 45.h,
+                              rowHeight: 52.h,
+                              selectedDayPredicate: (day) =>
+                                  isSameDay(_selectedDay, day),
+                              onDaySelected: (selectedDay, focusedDay) {
+                                setState(() {
+                                  _selectedDay = selectedDay;
+                                  _focusedDay = focusedDay;
+                                });
+                              },
+                              eventLoader: _manager.getEventsForDay,
+                              calendarStyle: CalendarStyle(
+                                outsideDaysVisible: false,
+                                todayDecoration: BoxDecoration(
+                                  color: AppStyle.appColor.withOpacity(0.15),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppStyle.appColor,
+                                    width: 1.5,
                                   ),
-                                ],
+                                ),
+                                todayTextStyle: TextStyle(
+                                  color: AppStyle.appColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                selectedDecoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppStyle.appColor,
+                                      AppStyle.appColor.withOpacity(0.8),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppStyle.appColor.withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            daysOfWeekStyle: DaysOfWeekStyle(
-                              weekdayStyle: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white54 : Colors.grey[600],
+                              daysOfWeekStyle: DaysOfWeekStyle(
+                                weekdayStyle: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? Colors.white54
+                                      : Colors.grey[600],
+                                ),
+                                weekendStyle: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.redAccent.withOpacity(0.8),
+                                ),
                               ),
-                              weekendStyle: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.redAccent.withOpacity(0.8),
+                              headerStyle: HeaderStyle(
+                                formatButtonVisible: false,
+                                titleCentered: true,
+                                leftChevronIcon: Icon(
+                                  Icons.chevron_left,
+                                  color: AppStyle.appColor,
+                                ),
+                                rightChevronIcon: Icon(
+                                  Icons.chevron_right,
+                                  color: AppStyle.appColor,
+                                ),
+                                titleTextStyle: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark ? Colors.white : Colors.black87,
+                                ),
                               ),
-                            ),
-                            headerStyle: HeaderStyle(
-                              formatButtonVisible: false,
-                              titleCentered: true,
-                              leftChevronIcon: Icon(Icons.chevron_left, color: AppStyle.appColor),
-                              rightChevronIcon: Icon(Icons.chevron_right, color: AppStyle.appColor),
-                              titleTextStyle: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? Colors.white : Colors.black87,
-                              ),
-                            ),
-                            calendarBuilders: CalendarBuilders(
-                              defaultBuilder: (context, day, focusedDay) {
-                                final events = _manager.getEventsForDay(day);
-                                if (events.isNotEmpty) {
-                                  final eventColor = _getEventColor(events.first, 0);
-                                  return Center(
-                                    child: Container(
-                                      width: 40.w,
-                                      height: 40.w,
-                                      decoration: BoxDecoration(
-                                        color: eventColor.withOpacity(0.12),
-                                        borderRadius: BorderRadius.circular(12.r),
-                                        border: Border.all(
-                                          color: eventColor.withOpacity(0.4),
-                                          width: 1,
+                              calendarBuilders: CalendarBuilders(
+                                defaultBuilder: (context, day, focusedDay) {
+                                  final events = _manager.getEventsForDay(day);
+                                  if (events.isNotEmpty) {
+                                    final eventColor = _getEventColor(
+                                      events.first,
+                                      0,
+                                    );
+                                    return Center(
+                                      child: Container(
+                                        width: 40.w,
+                                        height: 40.w,
+                                        decoration: BoxDecoration(
+                                          color: eventColor.withOpacity(0.12),
+                                          borderRadius: BorderRadius.circular(
+                                            12.r,
+                                          ),
+                                          border: Border.all(
+                                            color: eventColor.withOpacity(0.4),
+                                            width: 1,
+                                          ),
                                         ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${day.day}',
-                                          style: TextStyle(
-                                            color: isDark ? Colors.white : Colors.black87,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13.sp,
+                                        child: Center(
+                                          child: Text(
+                                            '${day.day}',
+                                            style: TextStyle(
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 13.sp,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                }
-                                return null;
-                              },
-                              markerBuilder: (context, day, events) {
-                                // Using the defaultBuilder to show colored box instead of dots.
-                                return null;
-                              },
+                                    );
+                                  }
+                                  return null;
+                                },
+                                markerBuilder: (context, day, events) {
+                                  // Using the defaultBuilder to show colored box instead of dots.
+                                  return null;
+                                },
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    ),
                     if (_selectedDay != null) ...[
                       SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 10.h,
+                        ),
                         sliver: SliverToBoxAdapter(
                           child: FadeIn(
                             duration: const Duration(milliseconds: 500),
@@ -286,6 +300,4 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
     );
   }
-
-
 }
