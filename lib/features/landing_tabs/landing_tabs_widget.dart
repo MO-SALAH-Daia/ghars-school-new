@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:ui' show ImageFilter;
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_page.dart';
+import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_page.dart';
 import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:ghars_school/shared/floating_bottom_nav_bar/floating_bottom_nav_bar.dart';
@@ -58,7 +59,7 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
             selectTap(0);
           },
         );
-        currentWidget = Container();
+        currentWidget = const CalendarPage();
         break;
       case 3:
         currentAppBarWidget = MainAppBar(
