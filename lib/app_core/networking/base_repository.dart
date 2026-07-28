@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 import '../app_core.dart';
 import 'base_response.dart';
+import '../locator.dart';
 
 enum HttpMethod { get, post, put, delete }
 
@@ -21,7 +23,9 @@ abstract class BaseRepository {
       connectTimeout: const Duration(minutes: 1),
       receiveTimeout: const Duration(minutes: 1),
     ),
-  )..interceptors.addAll(interceptors);
+  )
+    ..interceptors.addAll(interceptors)
+    ..interceptors.add(DioCacheInterceptor(options: globalCacheOptions));
 
   /// The master execution method
   Future<ListResult<T>?> _execute<T>({
@@ -30,18 +34,20 @@ abstract class BaseRepository {
     required T Function(dynamic) mapper,
     dynamic body,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) async {
     Response? response;
     try {
       switch (method) {
         case HttpMethod.get:
-          response = await _dio.get(path, queryParameters: queryParameters);
+          response = await _dio.get(path, queryParameters: queryParameters, options: options);
           break;
         case HttpMethod.post:
           response = await _dio.post(
             path,
             data: body,
             queryParameters: queryParameters,
+            options: options,
           );
           break;
         case HttpMethod.put:
@@ -49,6 +55,7 @@ abstract class BaseRepository {
             path,
             data: body,
             queryParameters: queryParameters,
+            options: options,
           );
           break;
         case HttpMethod.delete:
@@ -56,6 +63,7 @@ abstract class BaseRepository {
             path,
             data: body,
             queryParameters: queryParameters,
+            options: options,
           );
           break;
       }
@@ -100,33 +108,38 @@ abstract class BaseRepository {
     required String path,
     required T Function(dynamic) mapper,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) => _execute(
     method: HttpMethod.get,
     path: path,
     mapper: mapper,
     queryParameters: queryParameters,
+    options: options,
   );
 
   Future<ListResult<T>?> postRequest<T>({
     required String path,
     required T Function(dynamic) mapper,
     dynamic body,
+    Options? options,
   }) =>
-      _execute(method: HttpMethod.post, path: path, mapper: mapper, body: body);
+      _execute(method: HttpMethod.post, path: path, mapper: mapper, body: body, options: options);
 
   Future<ListResult<T>?> putRequest<T>({
     required String path,
     required T Function(dynamic) mapper,
     dynamic body,
+    Options? options,
   }) =>
-      _execute(method: HttpMethod.put, path: path, mapper: mapper, body: body);
+      _execute(method: HttpMethod.put, path: path, mapper: mapper, body: body, options: options);
 
   Future<ListResult<T>?> deleteRequest<T>({
     required String path,
     required T Function(dynamic) mapper,
     dynamic body,
+    Options? options,
   }) =>
-      _execute(method: HttpMethod.delete, path: path, mapper: mapper, body: body);
+      _execute(method: HttpMethod.delete, path: path, mapper: mapper, body: body, options: options);
 }
 
 class AppLoggerInterceptor extends Interceptor {

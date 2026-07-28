@@ -3,6 +3,7 @@ import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_repo.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/models/calendar_event_model.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class CalendarManager extends Manager {
   final CalendarRepo _repo = CalendarRepo();
@@ -20,24 +21,53 @@ class CalendarManager extends Manager {
 
   String? errorDescription;
 
-  Future<void> initCalendar() async {
+  Future<void> initCalendar({bool isRefresh = false}) async {
     if (_stateSubject.value == ManagerState.loading) return;
 
-    inState.add(ManagerState.loading);
+    bool hasCache = false;
     errorDescription = null;
 
+    // 1. Instant Cache Fetch (Call 1)
+    if (!isRefresh) {
+      try {
+        final cacheRes = await _repo.getCalendarEvents(cachePolicy: CachePolicy.forceCache);
+        if (cacheRes != null && cacheRes.data != null) {
+          _groupEvents(cacheRes.data!);
+          inState.add(ManagerState.success);
+          hasCache = true;
+        }
+      } catch (_) {
+        // No cache available, ignore and proceed to network
+      }
+    }
+
+    // Only show loading spinner if we don't have instant cache to display
+    if (!hasCache && !isRefresh) {
+      inState.add(ManagerState.loading);
+    }
+
+    // 2. Background Sync (Call 2)
     try {
-      final res = await _repo.getCalendarEvents();
-      if (res != null && res.data != null) {
-        _groupEvents(res.data!);
-        inState.add(ManagerState.success);
-      } else {
-        throw Exception(res?.message ?? "Failed to load calendar events");
+      final netRes = await _repo.getCalendarEvents(cachePolicy: CachePolicy.refreshForceCache);
+      if (netRes != null && netRes.data != null) {
+        _groupEvents(netRes.data!);
+        // Ensure state is success if it was loading
+        if (!hasCache || _stateSubject.value != ManagerState.success) {
+          inState.add(ManagerState.success);
+        }
+      } else if (!hasCache) {
+        throw Exception(netRes?.message ?? "Failed to load calendar events");
       }
     } catch (e) {
-      errorDescription = e.toString();
-      _eventsSubject.addError(e);
-      inState.add(ManagerState.error);
+      if (!hasCache) {
+        // Only show error UI if we completely failed and have no cache
+        errorDescription = e.toString();
+        _eventsSubject.addError(e);
+        inState.add(ManagerState.error);
+      } else {
+        // We have cache, so silently fail the background sync
+        debugPrint("Background sync failed, user is viewing cached data: $e");
+      }
     }
   }
 
@@ -77,7 +107,7 @@ class CalendarManager extends Manager {
   }
 
   Future<void> refreshCalendar() async {
-    await initCalendar();
+    await initCalendar(isRefresh: true);
   }
 
   @override

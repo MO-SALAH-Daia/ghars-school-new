@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_repo.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/models/home_dashboard_data.dart';
@@ -23,88 +24,97 @@ class HomeManager extends Manager {
 
   String? errorDescription;
 
-  Future<void> initDashboard() async {
+  Future<void> initDashboard({bool isRefresh = false}) async {
     if (_stateSubject.value == ManagerState.loading) return;
 
-    inState.add(ManagerState.loading);
+    bool hasCache = false;
     errorDescription = null;
 
-    try {
-      final user = _prefs.userObj;
-      final isLoggedIn = user != null && user.token != null;
+    final user = _prefs.userObj;
+    final isLoggedIn = user != null && user.token != null;
+    final isParent = isLoggedIn && user.userType == 'Parent';
+    final isEmployee = isLoggedIn && user.userType == 'Employee';
 
-      if (isLoggedIn) {
-        if (user.userType == 'Parent') {
-          // Fetch parent stats first (very fast)
-          final parentRes = await _repo.getParentDashboard();
-          if (parentRes == null) {
-            throw Exception("Failed to load dashboard data");
-          }
-
-          final data = HomeDashboardData(
-            images: [],
-            parentData: parentRes.data,
-          );
-          _dashboardDataSubject.add(data);
+    // 1. Instant Cache Fetch (Phase 1)
+    if (!isRefresh) {
+      try {
+        final cacheData = await _fetchData(isLoggedIn, isParent, isEmployee, CachePolicy.forceCache);
+        if (cacheData != null) {
+          _dashboardDataSubject.add(cacheData);
           inState.add(ManagerState.success);
-
-          // Fetch gallery images in the background
-          _loadGalleryImagesBackground();
-        } else if (user.userType == 'Employee') {
-          // Fetch employee stats first (very fast)
-          final employeeRes = await _repo.getEmployeeDashboard();
-          if (employeeRes == null) {
-            throw Exception("Failed to load dashboard data");
-          }
-
-          final data = HomeDashboardData(
-            images: [],
-            employeeData: employeeRes.data,
-          );
-          _dashboardDataSubject.add(data);
-          inState.add(ManagerState.success);
-
-          // Fetch gallery images in the background
-          _loadGalleryImagesBackground();
-        } else {
-          // Fallback if role is unknown but logged in
-          final data = HomeDashboardData(images: []);
-          _dashboardDataSubject.add(data);
-          inState.add(ManagerState.success);
-          _loadGalleryImagesBackground();
+          hasCache = true;
         }
-      } else {
-        // Guest user - only load gallery images
-        final imagesRes = await _repo.getDashboardImages();
-        final data = HomeDashboardData(
-          images: imagesRes?.data ?? [],
-        );
-        _dashboardDataSubject.add(data);
-        inState.add(ManagerState.success);
+      } catch (_) {
+        // Ignore cache misses
+      }
+    }
+
+    if (!hasCache && !isRefresh) {
+      inState.add(ManagerState.loading);
+    }
+
+    // 2. Network Sync (Phase 2)
+    try {
+      final netData = await _fetchData(isLoggedIn, isParent, isEmployee, CachePolicy.refreshForceCache);
+      if (netData != null) {
+        _dashboardDataSubject.add(netData);
+        if (!hasCache || _stateSubject.value != ManagerState.success) {
+          inState.add(ManagerState.success);
+        }
+      } else if (!hasCache) {
+        throw Exception("Failed to load dashboard data");
       }
     } catch (e) {
-      errorDescription = e.toString();
-      _dashboardDataSubject.addError(e);
-      inState.add(ManagerState.error);
+      if (!hasCache) {
+        errorDescription = e.toString();
+        _dashboardDataSubject.addError(e);
+        inState.add(ManagerState.error);
+      } else {
+        debugPrint("Background sync failed for home: $e");
+      }
     }
   }
 
-  Future<void> _loadGalleryImagesBackground() async {
-    try {
-      final imagesRes = await _repo.getDashboardImages();
-      if (imagesRes != null && imagesRes.data != null) {
-        final currentData = _dashboardDataSubject.valueOrNull ?? HomeDashboardData(images: []);
-        final updatedData = currentData.copyWith(images: imagesRes.data);
-        _dashboardDataSubject.add(updatedData);
+  Future<HomeDashboardData?> _fetchData(
+    bool isLoggedIn, 
+    bool isParent, 
+    bool isEmployee, 
+    CachePolicy policy
+  ) async {
+    HomeDashboardData data = HomeDashboardData(images: []);
+    
+    if (isLoggedIn) {
+      if (isParent) {
+        final parentRes = await _repo.getParentDashboard(cachePolicy: policy);
+        if (parentRes == null || parentRes.data == null) throw Exception("Failed to load");
+        data = data.copyWith(parentData: parentRes.data);
+      } else if (isEmployee) {
+        final employeeRes = await _repo.getEmployeeDashboard(cachePolicy: policy);
+        if (employeeRes == null || employeeRes.data == null) throw Exception("Failed to load");
+        data = data.copyWith(employeeData: employeeRes.data);
       }
-    } catch (e) {
-      // Background image loading failures shouldn't crash the home screen
-      debugPrint("Background gallery images fetch failed: $e");
+      
+      // Fetch gallery images non-blockingly
+      try {
+        final imagesRes = await _repo.getDashboardImages(cachePolicy: policy);
+        if (imagesRes != null && imagesRes.data != null) {
+          data = data.copyWith(images: imagesRes.data);
+        }
+      } catch (e) {
+        debugPrint("Gallery fetch failed: $e");
+      }
+    } else {
+      // Guest user
+      final imagesRes = await _repo.getDashboardImages(cachePolicy: policy);
+      if (imagesRes == null || imagesRes.data == null) throw Exception("Failed to load images");
+      data = data.copyWith(images: imagesRes.data);
     }
+
+    return data;
   }
 
   Future<void> refreshDashboard() async {
-    await initDashboard();
+    await initDashboard(isRefresh: true);
   }
 
   @override

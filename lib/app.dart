@@ -8,6 +8,7 @@ import 'package:ghars_school/features/onboarding/onboarding_drawer.dart';
 import 'package:ghars_school/features/onboarding/onboarding_page.dart';
 import 'package:ghars_school/shared/side_menu/container_page_with_drawer.dart';
 import 'package:ghars_school/shared/side_menu/drawer/drawer_widget.dart';
+import 'package:ghars_school/shared/global_connectivity_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app_core/app_core.dart';
@@ -85,7 +86,9 @@ class _GharsSchoolState extends State<GharsSchool> {
                 data: MediaQuery.of(
                   context,
                 ).copyWith(textScaler: const TextScaler.linear(1.0)),
-                child: LifeCycleAwareWidget(child: widget!),
+                child: LifeCycleAwareWidget(
+                  child: GlobalConnectivityWidget(child: widget!),
+                ),
               );
             },
 
