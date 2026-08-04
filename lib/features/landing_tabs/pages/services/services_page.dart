@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
@@ -12,13 +13,8 @@ class ServicesPage extends StatefulWidget {
   State<ServicesPage> createState() => _ServicesPageState();
 }
 
-class _ServicesPageState extends State<ServicesPage> with TickerProviderStateMixin {
+class _ServicesPageState extends State<ServicesPage> {
   final ServicesManager _manager = locator<ServicesManager>();
-
-  List<AnimationController> _controllers = [];
-  List<Animation<double>> _scaleAnimations = [];
-  List<Animation<double>> _fadeAnimations = [];
-  bool _animationsInitialized = false;
 
   final List<Color> _dynamicColors = [
     const Color(0xFF673AB7), // purple
@@ -46,50 +42,6 @@ class _ServicesPageState extends State<ServicesPage> with TickerProviderStateMix
   void initState() {
     super.initState();
     _manager.initServices();
-  }
-
-  void _initAnimations(int itemCount) {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-
-    _controllers = List.generate(
-      itemCount,
-      (index) => AnimationController(
-        duration: Duration(milliseconds: 400 + (index * 100)),
-        vsync: this,
-      ),
-    );
-
-    _scaleAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: controller, curve: Curves.elasticOut),
-      );
-    }).toList();
-
-    _fadeAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeIn),
-      );
-    }).toList();
-
-    for (int i = 0; i < _controllers.length; i++) {
-      Future.delayed(Duration(milliseconds: i * 80), () {
-        if (mounted && i < _controllers.length) {
-          _controllers[i].forward();
-        }
-      });
-    }
-
-    _animationsInitialized = true;
-  }
-
-  @override
-  void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    super.dispose();
   }
 
   List<ServiceItem> _getServiceItems(List<INVGroupStageModel> stages) {
@@ -144,43 +96,21 @@ class _ServicesPageState extends State<ServicesPage> with TickerProviderStateMix
             final stages = snapshot.data ?? [];
             final serviceItems = _getServiceItems(stages);
 
-            if (!_animationsInitialized || _controllers.length != serviceItems.length) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  setState(() {
-                    _initAnimations(serviceItems.length);
-                  });
-                }
-              });
-            }
-
-            return Padding(
-              padding: EdgeInsets.all(16.w),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.w,
-                  mainAxisSpacing: 16.h,
-                  childAspectRatio: 1.0,
-                ),
-                itemCount: serviceItems.length,
-                itemBuilder: (context, index) {
-                  if (index >= _controllers.length) {
+            return FadeInDown(
+              child: Padding(
+                padding: EdgeInsets.all(16.w),
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16.w,
+                    mainAxisSpacing: 16.h,
+                    childAspectRatio: 1.0,
+                  ),
+                  itemCount: serviceItems.length,
+                  itemBuilder: (context, index) {
                     return ServiceGridItem(item: serviceItems[index]);
-                  }
-                  return AnimatedBuilder(
-                    animation: _controllers[index],
-                    builder: (context, child) {
-                      return Transform.scale(
-                        scale: _scaleAnimations[index].value,
-                        child: Opacity(
-                          opacity: _fadeAnimations[index].value,
-                          child: ServiceGridItem(item: serviceItems[index]),
-                        ),
-                      );
-                    },
-                  );
-                },
+                  },
+                ),
               ),
             );
           },

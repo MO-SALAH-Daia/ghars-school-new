@@ -1,12 +1,13 @@
 import 'dart:ui';
+
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/models/calendar_event_model.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:animate_do/animate_do.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/widgets/calendar_events_list_widget.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -111,7 +112,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   slivers: [
                     SliverToBoxAdapter(
                       child: FadeInDown(
-                        duration: const Duration(milliseconds: 600),
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -128,7 +128,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                   ? []
                                   : [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.04),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.04,
+                                        ),
                                         blurRadius: 20,
                                         offset: const Offset(0, 10),
                                       ),
@@ -154,7 +156,9 @@ class _CalendarPageState extends State<CalendarPage> {
                               calendarStyle: CalendarStyle(
                                 outsideDaysVisible: false,
                                 todayDecoration: BoxDecoration(
-                                  color: AppStyle.appColor.withOpacity(0.15),
+                                  color: AppStyle.appColor.withValues(
+                                    alpha: 0.15,
+                                  ),
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: AppStyle.appColor,
@@ -169,7 +173,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   gradient: LinearGradient(
                                     colors: [
                                       AppStyle.appColor,
-                                      AppStyle.appColor.withOpacity(0.8),
+                                      AppStyle.appColor.withValues(alpha: 0.8),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -177,7 +181,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: AppStyle.appColor.withOpacity(0.3),
+                                      color: AppStyle.appColor.withValues(
+                                        alpha: 0.3,
+                                      ),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -195,7 +201,9 @@ class _CalendarPageState extends State<CalendarPage> {
                                 weekendStyle: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.redAccent.withOpacity(0.8),
+                                  color: Colors.redAccent.withValues(
+                                    alpha: 0.8,
+                                  ),
                                 ),
                               ),
                               headerStyle: HeaderStyle(
@@ -228,12 +236,16 @@ class _CalendarPageState extends State<CalendarPage> {
                                         width: 40.w,
                                         height: 40.w,
                                         decoration: BoxDecoration(
-                                          color: eventColor.withOpacity(0.12),
+                                          color: eventColor.withValues(
+                                            alpha: 0.12,
+                                          ),
                                           borderRadius: BorderRadius.circular(
                                             12.r,
                                           ),
                                           border: Border.all(
-                                            color: eventColor.withOpacity(0.4),
+                                            color: eventColor.withValues(
+                                              alpha: 0.4,
+                                            ),
                                             width: 1,
                                           ),
                                         ),

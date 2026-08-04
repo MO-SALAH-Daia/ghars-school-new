@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
@@ -109,9 +110,11 @@ class _HomePageState extends State<HomePage> {
                       // Carousel Section
                       if (images.isNotEmpty)
                         SliverToBoxAdapter(
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 8.h),
-                            child: HomeCarousel(images: images),
+                          child: FadeInDown(
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 8.h),
+                              child: HomeCarousel(images: images),
+                            ),
                           ),
                         ),
 
@@ -122,10 +125,13 @@ class _HomePageState extends State<HomePage> {
                           vertical: 12.h,
                         ),
                         sliver: SliverToBoxAdapter(
-                          child: _buildRoleDashboard(
-                            user,
-                            dashboardData,
-                            isArabic,
+                          child: FadeInDown(
+                            delay: const Duration(milliseconds: 200),
+                            child: _buildRoleDashboard(
+                              user,
+                              dashboardData,
+                              isArabic,
+                            ),
                           ),
                         ),
                       ),
