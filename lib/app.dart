@@ -77,7 +77,7 @@ class _GharsSchoolState extends State<GharsSchool> {
           builder: (_, _) => MaterialApp(
             debugShowCheckedModeBanner: false,
             color: AppStyle.bayZeroColor,
-            title: 'BayZero',
+            title: 'GharsSchool',
             builder: (BuildContext context, Widget? widget) {
               //add this line
               // ScreenUtil.setContext(context);

@@ -5,6 +5,7 @@ import 'package:ghars_school/features/landing_tabs/landing_tabs_manager.dart';
 import 'package:ghars_school/features/auth/login/login_manager.dart';
 import 'package:ghars_school/features/auth/forgot_password/forgot_password_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_manager.dart';
+import 'package:ghars_school/features/landing_tabs/pages/services/services_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_manager.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -77,6 +78,9 @@ Future<void> setupLocator() async {
 
   /// HomeManager
   locator.registerLazySingleton<HomeManager>(() => HomeManager());
+
+  /// ServicesManager
+  locator.registerLazySingleton<ServicesManager>(() => ServicesManager());
 
   /// CalendarManager
   locator.registerLazySingleton<CalendarManager>(() => CalendarManager());

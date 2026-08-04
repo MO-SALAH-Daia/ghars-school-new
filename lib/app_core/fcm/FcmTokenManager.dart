@@ -36,13 +36,18 @@ class FcmTokenManager extends Manager {
   Sink<String> get inFcmBody => _fcmBodySubject.sink;
   String get currentFcmBody => _fcmBodySubject.value;
 
-  // ✅ Wait for FCM token to be ready (max 5 seconds)
+  // ✅ Wait for FCM token to be ready
   Future<String> waitForFcmToken() async {
     // If token already available, return immediately
     if (currentFcmToken.isNotEmpty) {
       return currentFcmToken;
     }
 
+    // TODO: PushNotificationService is currently disabled.
+    // Returning a dummy token to avoid 5-second API delays and backend 500 errors.
+    return "dummy_token";
+
+    /*
     // Wait for token to arrive via onTokenRefresh
     try {
       return await fcmTokenStream
@@ -53,5 +58,6 @@ class FcmTokenManager extends Manager {
       log('FCM Token wait timeout: $e');
       return currentFcmToken;
     }
+    */
   }
 }
