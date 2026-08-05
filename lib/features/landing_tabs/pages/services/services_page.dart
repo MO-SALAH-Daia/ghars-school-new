@@ -5,6 +5,7 @@ import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/services/models/inv_group_stage_model.dart';
 import 'package:ghars_school/features/landing_tabs/pages/services/services_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/services/widgets/service_grid_item.dart';
+import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 
 class ServicesPage extends StatefulWidget {
   const ServicesPage({super.key});
@@ -70,15 +71,17 @@ class _ServicesPageState extends State<ServicesPage> {
           ? stageModel.arabicName ?? ""
           : stageModel.englishName ?? "";
 
-      items.add(ServiceItem(
-        icon: _dynamicIcons[i % _dynamicIcons.length],
-        titleKey: title,
-        color: _dynamicColors[i % _dynamicColors.length],
-        onTap: () {
-          // TODO: Navigate to ProductsMainPage with stageModel
-        },
-        dynamicIndex: i,
-      ));
+      items.add(
+        ServiceItem(
+          icon: _dynamicIcons[i % _dynamicIcons.length],
+          titleKey: title,
+          color: _dynamicColors[i % _dynamicColors.length],
+          onTap: () {
+            // TODO: Navigate to ProductsMainPage with stageModel
+          },
+          dynamicIndex: i,
+        ),
+      );
     }
 
     return items;
@@ -86,39 +89,50 @@ class _ServicesPageState extends State<ServicesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Observer<ManagerState>(
-      stream: _manager.state$,
-      onSuccess: (context, state) {
-        return StreamBuilder<List<INVGroupStageModel>>(
-          stream: _manager.stages$,
-          initialData: const [],
-          builder: (context, snapshot) {
-            final stages = snapshot.data ?? [];
-            final serviceItems = _getServiceItems(stages);
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70.h),
+        child: MainAppBar(
+          hasDrawerBtn: true,
+          hasCartBtn: true,
+          title: '${context.translate(AppStrings.services)}',
+        ),
+      ),
+      body: Observer<ManagerState>(
+        stream: _manager.state$,
+        onSuccess: (context, state) {
+          return StreamBuilder<List<INVGroupStageModel>>(
+            stream: _manager.stages$,
+            initialData: const [],
+            builder: (context, snapshot) {
+              final stages = snapshot.data ?? [];
+              final serviceItems = _getServiceItems(stages);
 
-            return FadeInDown(
-              child: Padding(
-                padding: EdgeInsets.all(16.w),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16.w,
-                    mainAxisSpacing: 16.h,
-                    childAspectRatio: 1.0,
+              return FadeInDown(
+                child: Padding(
+                  padding: EdgeInsets.all(16.w),
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16.w,
+                      mainAxisSpacing: 16.h,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: serviceItems.length,
+                    itemBuilder: (context, index) {
+                      return ServiceGridItem(item: serviceItems[index]);
+                    },
                   ),
-                  itemCount: serviceItems.length,
-                  itemBuilder: (context, index) {
-                    return ServiceGridItem(item: serviceItems[index]);
-                  },
                 ),
-              ),
-            );
-          },
-        );
-      },
-      onRetryClicked: () {
-        _manager.initServices();
-      },
+              );
+            },
+          );
+        },
+        onRetryClicked: () {
+          _manager.initServices();
+        },
+      ),
     );
   }
 }

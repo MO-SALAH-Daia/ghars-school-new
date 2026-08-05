@@ -7,6 +7,7 @@ import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_manager.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/models/calendar_event_model.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/widgets/calendar_events_list_widget.dart';
+import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -51,6 +52,13 @@ class _CalendarPageState extends State<CalendarPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70.h),
+        child: MainAppBar(
+          hasDrawerBtn: true,
+          title: '${context.translate(AppStrings.calendar)}',
+        ),
+      ),
       backgroundColor: isDark
           ? const Color(0xFF121212)
           : const Color(0xfff8faf6),

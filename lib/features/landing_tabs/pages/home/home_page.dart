@@ -11,6 +11,7 @@ import 'package:ghars_school/features/landing_tabs/pages/home/widgets/employee_d
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/guest_dashboard.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/home_carousel.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/widgets/parent_dashboard.dart';
+import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,6 +40,14 @@ class _HomePageState extends State<HomePage> {
     final user = prefs.userObj;
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(70.h),
+        child: MainAppBar(
+          hasDrawerBtn: true,
+          hasNotificationBtn: true,
+          hasCartBtn: true,
+        ),
+      ),
       backgroundColor: const Color(0xfff8faf6), // Soft organic background
       body: RefreshIndicator(
         onRefresh: () => _manager.refreshDashboard(),
@@ -103,9 +112,7 @@ class _HomePageState extends State<HomePage> {
                   return CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     slivers: [
-                      SliverToBoxAdapter(
-                        child: SizedBox(height: 12.h),
-                      ),
+                      SliverToBoxAdapter(child: SizedBox(height: 12.h)),
 
                       // Carousel Section
                       if (images.isNotEmpty)

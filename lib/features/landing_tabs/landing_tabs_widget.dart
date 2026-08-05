@@ -4,6 +4,7 @@ import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_page.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_page.dart';
 import 'package:ghars_school/features/landing_tabs/pages/services/services_page.dart';
+import 'package:ghars_school/features/landing_tabs/pages/student_profile/student_profile_page.dart';
 import 'package:ghars_school/shared/floating_bottom_nav_bar/floating_bottom_nav_bar.dart';
 import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
@@ -13,7 +14,6 @@ import 'landing_tabs_manager.dart';
 class LandingTabsWidget extends StatefulWidget {
   const LandingTabsWidget({super.key});
 
-  /// To Call any method from outside
   static _LandingTabsWidgetState? of(BuildContext context) =>
       context.findAncestorStateOfType<_LandingTabsWidgetState>();
 
@@ -22,139 +22,100 @@ class LandingTabsWidget extends StatefulWidget {
 }
 
 class _LandingTabsWidgetState extends State<LandingTabsWidget> {
-  int currentIndex = 0;
-  Widget currentWidget = HomePage();
-  Widget currentAppBarWidget = const MainAppBar(
-    hasDrawerBtn: true,
-    hasNotificationBtn: true,
-    hasCartBtn: true,
-  );
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
+  ];
 
   void selectTap(int tabIndex, {bool fromSeeAll = false}) {
-    currentIndex = tabIndex;
-    switch (tabIndex) {
-      case 0:
-        currentAppBarWidget = const MainAppBar(
-          hasDrawerBtn: true,
-          hasNotificationBtn: true,
-          hasCartBtn: true,
-        );
-        currentWidget = const HomePage();
-        break;
-      case 1:
-        currentAppBarWidget = MainAppBar(
-          hasCartBtn: true,
-          title: '${context.translate(AppStrings.services)}',
-          onBackBtnClicked: () {
-            selectTap(0);
-          },
-        );
-        currentWidget = const ServicesPage();
-        break;
-      case 2:
-        currentAppBarWidget = MainAppBar(
-          title: '${context.translate(AppStrings.calendar)}',
-          onBackBtnClicked: () {
-            selectTap(0);
-          },
-        );
-        currentWidget = const CalendarPage();
-        break;
-      case 3:
-        currentAppBarWidget = MainAppBar(
-          hasCartBtn: true,
-          title: '${context.translate(AppStrings.studentProfile)}',
-          onBackBtnClicked: () {
-            selectTap(0);
-          },
-        );
-        currentWidget = Container();
-        break;
-      default:
-        currentAppBarWidget = const MainAppBar();
-        currentWidget = HomePage();
-        break;
+    final currentTabIndex = locator<LandingTabsManager>().tabIndex;
+    if (tabIndex == currentTabIndex && !fromSeeAll) {
+      // Pop to first route if we tap the active tab again
+      _navigatorKeys[tabIndex].currentState?.popUntil((route) => route.isFirst);
+    } else {
+      locator<LandingTabsManager>().tabIndex = tabIndex;
     }
+  }
 
-    locator<LandingTabsManager>().tabIndex = tabIndex;
+  Widget _buildNavigator(int index, Widget page) {
+    return Navigator(
+      key: _navigatorKeys[index],
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(builder: (context) => page);
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final landingTabsManager = context.use<LandingTabsManager>();
-    return GestureDetector(
-      onTap: () {
-        ZoomDrawer.of(context)?.close();
-      },
-      child: WillPopScope(
-        onWillPop: () async {
-          if (currentIndex == 0) {
-            return true;
-          } else {
-            selectTap(0);
-            return false;
-          }
-        },
-        child: ValueListenableBuilder<int>(
-          valueListenable: landingTabsManager.tabIndexNotifier,
-          builder: (context, tabIndex, _) {
-            if (tabIndex == 1 && landingTabsManager.fromSeeAll) {
-              selectTap(1, fromSeeAll: true);
+    final landingTabsManager = locator<LandingTabsManager>();
+
+    return ValueListenableBuilder<int>(
+      valueListenable: landingTabsManager.tabIndexNotifier,
+      builder: (context, tabIndex, _) {
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) async {
+            if (didPop) return;
+            final isFirstRouteInCurrentTab =
+                !await (_navigatorKeys[tabIndex].currentState?.maybePop() ?? Future.value(false));
+            if (isFirstRouteInCurrentTab) {
+              if (tabIndex != 0) {
+                selectTap(0);
+              } else {
+                // Let system handle back button
+              }
             }
-            if (tabIndex == 3 && landingTabsManager.fromSeeAll) {
-              selectTap(3, fromSeeAll: true);
-            }
-            if (tabIndex == 4 && landingTabsManager.fromSeeAll) {
-              selectTap(4, fromSeeAll: true);
-            }
-            return Scaffold(
-              // key: tabsScaffoldKey,
-              // drawer: const AppDrawer(),
-              backgroundColor: Colors.white,
-              resizeToAvoidBottomInset: false,
-              extendBody: true,
-              appBar: PreferredSize(
-                preferredSize: Size.fromHeight(70.h),
-                // child: SafeArea(
-                child: currentAppBarWidget,
-                // ),
-              ),
-              body: Container(color: Colors.white, child: currentWidget),
-              bottomNavigationBar: FloatingBottomNavBar(
-                currentIndex: currentIndex,
-                backgroundColor: Colors.white,
-                activeColor: AppStyle.appColor,
-                inactiveColor: const Color(0xff8c9682),
-                onTap: (index) {
-                  selectTap(index);
-                },
-                items: [
-                  FloatingNavItem(
-                    icon: Icons.home_outlined,
-                    activeIcon: Icons.home,
-                    label: '${context.translate(AppStrings.home)}',
-                  ),
-                  FloatingNavItem(
-                    icon: Icons.widgets_outlined,
-                    activeIcon: Icons.widgets,
-                    label: '${context.translate(AppStrings.services)}',
-                  ),
-                  FloatingNavItem(
-                    icon: Icons.calendar_month_outlined,
-                    activeIcon: Icons.calendar_month,
-                    label: '${context.translate(AppStrings.calendar)}',
-                  ),
-                  FloatingNavItem(
-                    icon: Icons.person_outline,
-                    activeIcon: Icons.person,
-                    label: '${context.translate(AppStrings.studentProfile)}',
-                  ),
-                ],
-              ),
-            );
           },
-        ),
-      ),
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            resizeToAvoidBottomInset: false,
+            extendBody: true,
+            body: IndexedStack(
+              index: tabIndex,
+              children: [
+                _buildNavigator(0, const HomePage()),
+                _buildNavigator(1, const ServicesPage()),
+                _buildNavigator(2, const CalendarPage()),
+                _buildNavigator(3, const StudentProfilePage()),
+              ],
+            ),
+            bottomNavigationBar: FloatingBottomNavBar(
+              currentIndex: tabIndex,
+              backgroundColor: Colors.white,
+              activeColor: AppStyle.appColor,
+              inactiveColor: const Color(0xff8c9682),
+              onTap: (index) {
+                selectTap(index);
+              },
+              items: [
+                FloatingNavItem(
+                  icon: Icons.home_outlined,
+                  activeIcon: Icons.home,
+                  label: '${context.translate(AppStrings.home)}',
+                ),
+                FloatingNavItem(
+                  icon: Icons.widgets_outlined,
+                  activeIcon: Icons.widgets,
+                  label: '${context.translate(AppStrings.services)}',
+                ),
+                FloatingNavItem(
+                  icon: Icons.calendar_month_outlined,
+                  activeIcon: Icons.calendar_month,
+                  label: '${context.translate(AppStrings.calendar)}',
+                ),
+                FloatingNavItem(
+                  icon: Icons.person_outline,
+                  activeIcon: Icons.person,
+                  label: '${context.translate(AppStrings.studentProfile)}',
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

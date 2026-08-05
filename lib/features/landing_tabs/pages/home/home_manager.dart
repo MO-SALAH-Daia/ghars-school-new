@@ -21,6 +21,7 @@ class HomeManager extends Manager {
   Sink<ManagerState> get inState => _stateSubject.sink;
 
   Stream<HomeDashboardData> get dashboardData$ => _dashboardDataSubject.stream;
+  HomeDashboardData? get currentDashboardData => _dashboardDataSubject.hasValue ? _dashboardDataSubject.value : null;
 
   String? errorDescription;
 
