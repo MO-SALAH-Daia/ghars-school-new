@@ -11,70 +11,85 @@ class StudentMainInfoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = locator<PrefsService>().appLanguage == "ar";
+
+    final stage = isAr
+        ? (student.regStageName1 ?? student.regStageName2 ?? '')
+        : (student.regStageName2 ?? student.regStageName1 ?? '');
+
+    final grade = isAr
+        ? (student.studntGradeName1 ?? student.studntGradeName2 ?? '')
+        : (student.studntGradeName2 ?? student.studntGradeName1 ?? '');
+
+    final className = isAr
+        ? (student.studntClassName1 ?? student.studntClassName2 ?? '')
+        : (student.studntClassName2 ?? student.studntClassName1 ?? '');
+
+    String formattedBirthDate = '-';
+    if (student.birthDate != null && student.birthDate!.isNotEmpty) {
+      try {
+        formattedBirthDate = DateFormat('dd-MM-yyyy').format(
+          DateTime.parse(student.birthDate!),
+        );
+      } catch (_) {
+        formattedBirthDate = student.birthDate!;
+      }
+    }
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(
         children: [
-          _buildInfoCard(
+          _StudentInfoItemWidget(
             icon: Icons.badge_outlined,
-            title: locator<PrefsService>().appLanguage == "ar"
-                ? 'الرقم المدني'
-                : 'Civil ID',
+            title: isAr ? 'الرقم المدني' : 'Civil ID',
             value: student.idNo ?? '-',
           ),
-          _buildInfoCard(
+          _StudentInfoItemWidget(
             icon: Icons.cake_outlined,
-            title: locator<PrefsService>().appLanguage == "ar"
-                ? 'تاريخ الميلاد'
-                : 'Date of Birth',
-            value: student.birthDate != null
-                ? DateFormat(
-                    'dd-MM-yyyy',
-                  ).format(DateTime.parse(student.birthDate!))
-                : '-',
+            title: isAr ? 'تاريخ الميلاد' : 'Date of Birth',
+            value: formattedBirthDate,
           ),
-          _buildInfoCard(
-            icon: Icons.email_outlined,
-            title: context.translate(AppStrings.emailAddress) ?? 'Email',
-            value:
-                (student.studentEmails != null &&
-                    student.studentEmails!.isNotEmpty)
-                ? student.studentEmails!.first.email ?? '-'
-                : '-',
-          ),
-          _buildInfoCard(
-            icon: Icons.phone_outlined,
-            title: context.translate(AppStrings.phoneNumber) ?? 'Mobile',
-            value: student.tel1 ?? student.tel2 ?? '-',
-          ),
-          _buildInfoCard(
+          _StudentInfoItemWidget(
             icon: Icons.school_outlined,
-            title: locator<PrefsService>().appLanguage == "ar"
-                ? 'المدرسة'
-                : 'School',
-            value: () {
-              final isAr = locator<PrefsService>().appLanguage == "ar";
-              return isAr
-                  ? (student.regStageName1 ?? student.regStageName2 ?? '')
-                  : (student.regStageName2 ?? student.regStageName1 ?? '');
-            }(),
+            title: isAr ? 'المرحلة الدراسية' : 'School Stage',
+            value: stage.isNotEmpty ? stage : '-',
+          ),
+          _StudentInfoItemWidget(
+            icon: Icons.class_outlined,
+            title: isAr ? 'الصف الدراسي' : 'Grade',
+            value: grade.isNotEmpty ? grade : '-',
+          ),
+          _StudentInfoItemWidget(
+            icon: Icons.meeting_room_outlined,
+            title: isAr ? 'الفصل' : 'Class',
+            value: className.isNotEmpty ? className : '-',
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildInfoCard({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
+class _StudentInfoItemWidget extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String value;
+
+  const _StudentInfoItemWidget({
+    required this.icon,
+    required this.title,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: 10.h),
       padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(

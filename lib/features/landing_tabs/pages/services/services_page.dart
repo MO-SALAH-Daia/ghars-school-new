@@ -94,45 +94,47 @@ class _ServicesPageState extends State<ServicesPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.h),
         child: MainAppBar(
-          hasDrawerBtn: true,
-          hasCartBtn: true,
-          title: '${context.translate(AppStrings.services)}',
+            hasDrawerBtn: true,
+            hasCartBtn: true,
+            title: '${context.translate(AppStrings.services)}',
+          ),
         ),
-      ),
-      body: Observer<ManagerState>(
-        stream: _manager.state$,
-        onSuccess: (context, state) {
-          return StreamBuilder<List<INVGroupStageModel>>(
-            stream: _manager.stages$,
-            initialData: const [],
-            builder: (context, snapshot) {
-              final stages = snapshot.data ?? [];
-              final serviceItems = _getServiceItems(stages);
+        body: Observer<ManagerState>(
+          stream: _manager.state$,
+          onSuccess: (context, state) {
+            return StreamBuilder<List<INVGroupStageModel>>(
+              stream: _manager.stages$,
+              initialData: const [],
+              builder: (context, snapshot) {
+                final stages = snapshot.data ?? [];
+                final serviceItems = _getServiceItems(stages);
 
-              return FadeInDown(
-                child: Padding(
-                  padding: EdgeInsets.all(16.w),
-                  child: GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.w,
-                      mainAxisSpacing: 16.h,
-                      childAspectRatio: 1.0,
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                  child: FadeInUp(
+                    duration: const Duration(milliseconds: 400),
+                    child: GridView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 14.w,
+                        mainAxisSpacing: 14.h,
+                        childAspectRatio: 1.0,
+                      ),
+                      itemCount: serviceItems.length,
+                      itemBuilder: (context, index) {
+                        return ServiceGridItem(item: serviceItems[index]);
+                      },
                     ),
-                    itemCount: serviceItems.length,
-                    itemBuilder: (context, index) {
-                      return ServiceGridItem(item: serviceItems[index]);
-                    },
                   ),
-                ),
-              );
-            },
-          );
-        },
-        onRetryClicked: () {
-          _manager.initServices();
-        },
-      ),
-    );
+                );
+              },
+            );
+          },
+          onRetryClicked: () {
+            _manager.initServices();
+          },
+        ),
+      );
   }
 }

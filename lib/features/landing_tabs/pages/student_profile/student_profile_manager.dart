@@ -63,6 +63,7 @@ class StudentProfileManager extends Manager {
   }
 
   Future<void> selectStudent(parent_model.StudentDto student) async {
+    _selectedTabSubject.add(0);
     _selectedStudentSubject.add(student);
     _studentDetailsSubject.add(null);
     errorDescription = null;

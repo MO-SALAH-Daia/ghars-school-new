@@ -30,7 +30,6 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Color _getEventColor(CalendarEventModel event, int index) {
-    // Generate a unique color based on event ID or index
     final List<Color> fallbackColors = [
       AppStyle.appColor,
       AppStyle.blueCyan,
@@ -55,19 +54,19 @@ class _CalendarPageState extends State<CalendarPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.h),
         child: MainAppBar(
-          hasDrawerBtn: true,
-          title: '${context.translate(AppStrings.calendar)}',
+            hasDrawerBtn: true,
+            title: '${context.translate(AppStrings.calendar)}',
+          ),
         ),
-      ),
-      backgroundColor: isDark
-          ? const Color(0xFF121212)
-          : const Color(0xfff8faf6),
-      body: Stack(
-        children: [
-          // Background organic gradient with soft glows (same as home)
-          if (!isDark)
-            Container(
-              decoration: const BoxDecoration(
+        backgroundColor: isDark
+            ? const Color(0xFF121212)
+            : const Color(0xfff8faf6),
+        body: Stack(
+          children: [
+            // Background organic gradient with soft glows (same as home)
+            if (!isDark)
+              Container(
+                decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xffedf4e8), Color(0xfff5f8f3), Colors.white],
                   begin: Alignment.topCenter,

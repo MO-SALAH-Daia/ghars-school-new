@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ghars_school/app_core/app_core.dart';
 import 'package:ghars_school/features/landing_tabs/pages/calendar/calendar_page.dart';
 import 'package:ghars_school/features/landing_tabs/pages/home/home_page.dart';
 import 'package:ghars_school/features/landing_tabs/pages/services/services_page.dart';
 import 'package:ghars_school/features/landing_tabs/pages/student_profile/student_profile_page.dart';
 import 'package:ghars_school/shared/floating_bottom_nav_bar/floating_bottom_nav_bar.dart';
-import 'package:ghars_school/shared/main_app_bar/main_app_bar.dart';
 import 'package:ghars_school/shared/side_menu/custom_zoom/custom_zoom.dart';
 
 import 'landing_tabs_manager.dart';
@@ -56,24 +54,28 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
       valueListenable: landingTabsManager.tabIndexNotifier,
       builder: (context, tabIndex, _) {
         return PopScope(
-          canPop: false,
+          canPop: tabIndex == 0,
           onPopInvokedWithResult: (didPop, result) async {
             if (didPop) return;
-            final isFirstRouteInCurrentTab =
-                !await (_navigatorKeys[tabIndex].currentState?.maybePop() ?? Future.value(false));
-            if (isFirstRouteInCurrentTab) {
-              if (tabIndex != 0) {
-                selectTap(0);
-              } else {
-                // Let system handle back button
-              }
+
+            // 1. If side menu drawer is open, close it
+            final drawerController = locator<ZoomDrawerController>();
+            if (drawerController.isOpen?.call() == true) {
+              drawerController.close?.call();
+              return;
+            }
+
+            // 2. On any non-home tab (Services, Calendar, Student Profile):
+            // Always switch back to Home tab!
+            if (tabIndex != 0) {
+              selectTap(0);
             }
           },
           child: Scaffold(
-            backgroundColor: Colors.white,
-            resizeToAvoidBottomInset: false,
-            extendBody: true,
-            body: IndexedStack(
+          backgroundColor: Colors.white,
+          resizeToAvoidBottomInset: false,
+          extendBody: true,
+          body: IndexedStack(
               index: tabIndex,
               children: [
                 _buildNavigator(0, const HomePage()),
@@ -113,7 +115,7 @@ class _LandingTabsWidgetState extends State<LandingTabsWidget> {
                 ),
               ],
             ),
-          ),
+        ),
         );
       },
     );

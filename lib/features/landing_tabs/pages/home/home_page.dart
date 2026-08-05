@@ -43,18 +43,18 @@ class _HomePageState extends State<HomePage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(70.h),
         child: MainAppBar(
-          hasDrawerBtn: true,
-          hasNotificationBtn: true,
-          hasCartBtn: true,
+            hasDrawerBtn: true,
+            hasNotificationBtn: true,
+            hasCartBtn: true,
+          ),
         ),
-      ),
-      backgroundColor: const Color(0xfff8faf6), // Soft organic background
-      body: RefreshIndicator(
-        onRefresh: () => _manager.refreshDashboard(),
-        color: AppStyle.appColor,
-        child: Stack(
-          children: [
-            // Background organic gradient with soft glows
+        backgroundColor: const Color(0xfff8faf6), // Soft organic background
+        body: RefreshIndicator(
+          onRefresh: () => _manager.refreshDashboard(),
+          color: AppStyle.appColor,
+          child: Stack(
+            children: [
+              // Background organic gradient with soft glows
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
